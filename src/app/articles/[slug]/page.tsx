@@ -1,5 +1,7 @@
 import { Metadata } from 'next';
-import ArticlePageClient from '@/components/ArticlePageClient';
+import { cache } from 'react';
+import { unstable_cache } from 'next/cache';
+import ArticlePageComponent from '@/components/ArticlePage';
 import { Article } from '@/components/ArticleCard';
 import { articlesApi } from '@/lib/api/articles';
 import { notFound } from 'next/navigation';
@@ -8,7 +10,22 @@ import { formatArticleDate } from '@/utils/date';
 // ISR - revalidate every 60 seconds
 export const revalidate = 60;
 
-// Using SSR instead of SSG
+// Cache the article fetch to prevent duplicate API calls
+const getArticleBySlug = cache(async (slug: string) => {
+  return await articlesApi.getArticleBySlug(slug);
+});
+
+// Aggressively cache related articles across all builds and requests
+const getRelatedArticles = unstable_cache(
+  async () => {
+    return await articlesApi.getArticles({ pageSize: 4 });
+  },
+  ['related-articles'],
+  {
+    revalidate: 60, // Cache for 1 minute
+    tags: ['related-articles'],
+  }
+);
 
 // Helper function to strip markdown and get plain text
 function stripMarkdown(markdown: string): string {
@@ -41,7 +58,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   
   try {
-    const response = await articlesApi.getArticleBySlug(slug);
+    const response = await getArticleBySlug(slug);
     const article = response.data;
     
     // Strip markdown from title and use subtitle for description
@@ -82,12 +99,12 @@ export default async function ArticlePage({ params }: PageProps) {
   const { slug } = await params;
   
   try {
-    // Fetch the current article
-    const articleResponse = await articlesApi.getArticleBySlug(slug);
+    // Fetch the current article (cached)
+    const articleResponse = await getArticleBySlug(slug);
     const article = articleResponse.data;
     
-    // Fetch related articles (latest 3 excluding current)
-    const relatedResponse = await articlesApi.getArticles({ pageSize: 4 });
+    // Fetch related articles (cached and shared across all pages)
+    const relatedResponse = await getRelatedArticles();
     const relatedArticles: Article[] = relatedResponse.data
       .filter(a => a.slug !== slug)
       .slice(0, 3)
@@ -105,7 +122,7 @@ export default async function ArticlePage({ params }: PageProps) {
     const articleData = {
       slug: article.slug,
       title: article.title,
-      subtitle: article.subtitle, // Now using subtitle from API
+      subtitle: article.subtitle,
       author: 'Messe.ae Team',
       authorRole: 'Exhibition Experts',
       publishDate: formatArticleDate(article.createDate),
@@ -115,7 +132,7 @@ export default async function ArticlePage({ params }: PageProps) {
       content: article.text,
     };
     
-    return <ArticlePageClient articleData={articleData} relatedArticles={relatedArticles} />;
+    return <ArticlePageComponent articleData={articleData} relatedArticles={relatedArticles} />;
   } catch (error) {
     console.error('Error loading article:', error);
     notFound();

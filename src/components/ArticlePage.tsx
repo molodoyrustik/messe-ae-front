@@ -1,10 +1,7 @@
-"use client";
-
-import { useState } from "react";
-import { Box, Container, Typography, Button } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 import Header from "@/components/Header";
 import FooterSection from "@/components/landing/FooterSection";
-import { ContactFormModal } from "@/components/ContactFormModal";
+import ContactFormButton from "@/components/ContactFormButton";
 import { Article } from "@/components/ArticleCard";
 import LinkedInNotification from "@/components/LinkedInNotification";
 import SmallArticleCard from "@/components/SmallArticleCard";
@@ -24,16 +21,15 @@ interface ArticleData {
   content: string;
 }
 
-interface ArticlePageClientProps {
+interface ArticlePageProps {
   articleData: ArticleData;
   relatedArticles: Article[];
 }
 
-export default function ArticlePageClient({
+export default function ArticlePage({
   articleData,
   relatedArticles,
-}: ArticlePageClientProps) {
-  const [contactModalOpen, setContactModalOpen] = useState(false);
+}: ArticlePageProps) {
 
   return (
     <Box sx={{ minHeight: "100vh", backgroundColor: "#FFFFFF" }}>
@@ -329,12 +325,12 @@ export default function ArticlePageClient({
           <Box
             data-id="next-articles-section"
             sx={{
-              width: { xs: "100%", md: "22rem" }, // Увеличено с 20rem до 22rem для лучшего размещения карточек
+              width: { xs: "100%", md: "22rem" },
               display: "flex",
               flexDirection: "column",
-              gap: "0.75rem", // 12px
+              gap: "0.75rem",
               mt: { xs: "2rem", md: "2rem" },
-              overflow: "hidden", // Fix title overflow
+              overflow: "hidden",
             }}
           >
             <Typography
@@ -354,7 +350,7 @@ export default function ArticlePageClient({
               sx={{
                 display: "flex",
                 flexDirection: "column",
-                gap: "1.5rem", // Spacing between article blocks
+                gap: "1.5rem",
               }}
             >
               {relatedArticles.slice(0, 3).map((article) => (
@@ -364,52 +360,8 @@ export default function ArticlePageClient({
           </Box>
         </Box>
 
-        {/* Start Your Project Button */}
-        <Box
-          sx={{
-            display: { xs: "none", md: "flex" },
-            justifyContent: "flex-start",
-            mt: "3.75rem",
-          }}
-        >
-          <Button
-            variant="contained"
-            onClick={() => setContactModalOpen(true)}
-            sx={{
-              height: "3rem",
-              px: "1.25rem",
-              py: "0.5rem",
-              backgroundColor: "#656CAF",
-              borderRadius: "0.5rem",
-              boxShadow:
-                "0px 3px 1px -2px rgba(0,0,0,0.20), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12)",
-              textTransform: "none",
-              "&:hover": {
-                backgroundColor: "#4C53A2",
-              },
-            }}
-          >
-            <Typography
-              sx={{
-                fontFamily: "Roboto",
-                fontWeight: 400,
-                fontSize: "1.5rem",
-                lineHeight: "1.75rem",
-                letterSpacing: "0.02rem",
-                color: "#FFFFFF",
-              }}
-            >
-              Start Your Project
-            </Typography>
-          </Button>
-        </Box>
+        <ContactFormButton />
       </Container>
-
-      {/* Contact Form Modal */}
-      <ContactFormModal
-        open={contactModalOpen}
-        onClose={() => setContactModalOpen(false)}
-      />
 
       <FooterSection />
     </Box>

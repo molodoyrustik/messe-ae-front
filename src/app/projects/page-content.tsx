@@ -20,7 +20,8 @@ import ProjectCard from '@/components/projects/ProjectCard';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import CombinedFilterPanel from '@/components/projects/CombinedFilterPanel';
 import FilterIcon from '@/components/icons/FilterIcon';
-import { useProjects } from '@/hooks/use-projects';
+import InfiniteScrollTrigger from '@/components/InfiniteScrollTrigger';
+import { useInfiniteProjects } from '@/hooks/use-projects';
 import { useClientsWithProjectCounts } from '@/hooks/use-clients';
 import { ProjectsFilters } from '@/types/api';
 
@@ -43,25 +44,19 @@ export default function ProjectsPageContent() {
     const clientsParam = searchParams.get('clients');
     const sizesParam = searchParams.get('sizes');
     const typesParam = searchParams.get('types');
-    const pageParam = searchParams.get('page');
     
     return {
       clients: clientsParam ? clientsParam.split(',') : [],
       sizes: sizesParam ? sizesParam.split(',') : [],
       types: typesParam ? typesParam.split(',') : [],
-      page: pageParam ? parseInt(pageParam, 10) : 1,
     };
   }, [searchParams]);
   
-  const [filters, setFilters] = useState<ProjectsFilters>({
-    page: 1,
-    pageSize: 12,
-  });
+  const [filters, setFilters] = useState<Omit<ProjectsFilters, 'page' | 'pageSize'>>({});
   
   const [selectedClients, setSelectedClients] = useState<string[]>(initialParams.clients);
   const [selectedSizeRanges, setSelectedSizeRanges] = useState<string[]>(initialParams.sizes);
   const [selectedTypes, setSelectedTypes] = useState<string[]>(initialParams.types);
-  const [currentPage, setCurrentPage] = useState(initialParams.page);
   
   const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
   const [showLeftGradient, setShowLeftGradient] = useState(false);
@@ -73,7 +68,6 @@ export default function ProjectsPageContent() {
     clients?: string[];
     sizes?: string[];
     types?: string[];
-    page?: number;
   }) => {
     const newSearchParams = new URLSearchParams(searchParams.toString());
     
@@ -104,28 +98,26 @@ export default function ProjectsPageContent() {
       }
     }
     
-    // Update or remove page param
-    if (params.page !== undefined) {
-      if (params.page > 1) {
-        newSearchParams.set('page', params.page.toString());
-      } else {
-        newSearchParams.delete('page');
-      }
-    }
+    // Remove any existing page param since we're using infinite scroll
+    newSearchParams.delete('page');
     
     const newURL = `${pathname}${newSearchParams.toString() ? `?${newSearchParams.toString()}` : ''}`;
     router.push(newURL, { scroll: false });
   }, [searchParams, pathname, router]);
 
-  const { data: projectsData, isLoading: projectsLoading, error: projectsError } = useProjects(filters);
+  const { 
+    data: projectsData, 
+    isLoading: projectsLoading, 
+    error: projectsError,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteProjects(filters);
   const { data: clientsData, isLoading: clientsLoading } = useClientsWithProjectCounts();
   
   // Sync filters with URL params when they're set initially
   useEffect(() => {
-    const newFilters: ProjectsFilters = {
-      page: initialParams.page,
-      pageSize: 12,
-    };
+    const newFilters: Omit<ProjectsFilters, 'page' | 'pageSize'> = {};
     
     // Add client filter if present
     if (initialParams.clients.length > 0) {
@@ -148,13 +140,17 @@ export default function ProjectsPageContent() {
     }
     
     setFilters(newFilters);
-  }, [initialParams.page, initialParams.clients, initialParams.sizes, initialParams.types]); // Dependencies for URL params
+  }, [initialParams.clients, initialParams.sizes, initialParams.types]); // Dependencies for URL params
   
   // Enrich projects with client project counts
   const filteredProjects = useMemo(() => {
-    if (!projectsData?.data) return [];
+    if (!projectsData?.pages) {
+      return [];
+    }
     
-    const projects = [...projectsData.data];
+    // Flatten all pages into one array
+    const projects = projectsData.pages.flatMap(page => page.data);
+
     
     if (!clientsData?.data) return projects;
     
@@ -167,7 +163,7 @@ export default function ProjectsPageContent() {
     });
     
     // Enrich each project's client with projectCount
-    return projects.map(project => {
+    const enrichedProjects = projects.map(project => {
       if (project.client?.slug && clientProjectCounts.has(project.client.slug)) {
         return {
           ...project,
@@ -179,6 +175,8 @@ export default function ProjectsPageContent() {
       }
       return project;
     });
+    
+    return enrichedProjects;
   }, [projectsData, clientsData]);
   
   // Use all clients for chips
@@ -212,15 +210,13 @@ export default function ProjectsPageContent() {
     const newClients = selectedClients.includes(clientSlug) ? [] : [clientSlug];
     
     setSelectedClients(newClients);
-    updateURL({ clients: newClients, page: 1 });
+    updateURL({ clients: newClients });
     
-    const newFilters: ProjectsFilters = {
+    const newFilters: Omit<ProjectsFilters, 'page' | 'pageSize'> = {
       ...filters,
       clientSlugs: newClients.length > 0 ? newClients : undefined,
-      page: 1,
     };
     setFilters(newFilters);
-    setCurrentPage(1);
   };
   
   const handleSizeToggle = (sizeLabel: string) => {
@@ -229,20 +225,18 @@ export default function ProjectsPageContent() {
     
     setSelectedSizeRanges(newSizes);
     // Keep types when changing size
-    updateURL({ sizes: newSizes, types: selectedTypes, page: 1 });
+    updateURL({ sizes: newSizes, types: selectedTypes });
     
     const ranges = newSizes
       .map(label => sizeRanges.find(r => r.label === label))
       .filter(Boolean);
     
-    const newFilters: ProjectsFilters = {
+    const newFilters: Omit<ProjectsFilters, 'page' | 'pageSize'> = {
       ...filters,
       sizeRanges: ranges.length > 0 ? ranges.map(r => r!.value) : undefined,
       constructionTypes: selectedTypes.length > 0 ? selectedTypes : undefined, // Keep types
-      page: 1,
     };
     setFilters(newFilters);
-    setCurrentPage(1);
   };
   
   const handleTypeToggle = (type: string) => {
@@ -251,39 +245,27 @@ export default function ProjectsPageContent() {
     
     setSelectedTypes(newTypes);
     // Don't clear size ranges when selecting type - keep existing size filter
-    updateURL({ types: newTypes, sizes: selectedSizeRanges, page: 1 });
+    updateURL({ types: newTypes, sizes: selectedSizeRanges });
     
     const ranges = selectedSizeRanges
       .map(label => sizeRanges.find(r => r.label === label))
       .filter(Boolean);
     
-    const newFilters: ProjectsFilters = {
+    const newFilters: Omit<ProjectsFilters, 'page' | 'pageSize'> = {
       ...filters,
       constructionTypes: newTypes.length > 0 ? newTypes : undefined,
       sizeRanges: ranges.length > 0 ? ranges.map(r => r!.value) : undefined, // Keep size ranges
-      page: 1,
     };
     setFilters(newFilters);
-    setCurrentPage(1);
   };
   
-  const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
-    updateURL({ page: newPage });
-    setFilters({ ...filters, page: newPage });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
   
   const handleClearFilters = () => {
     setSelectedClients([]);
     setSelectedSizeRanges([]);
     setSelectedTypes([]);
-    updateURL({ clients: [], sizes: [], types: [], page: 1 });
-    setFilters({
-      page: 1,
-      pageSize: 12,
-    });
-    setCurrentPage(1);
+    updateURL({ clients: [], sizes: [], types: [] });
+    setFilters({});
   };
 
   const handleClientScroll = useCallback(() => {
@@ -448,14 +430,12 @@ export default function ProjectsPageContent() {
                   label="All"
                   onClick={() => {
                     setSelectedClients([]);
-                    updateURL({ clients: [], page: 1 });
-                    const newFilters: ProjectsFilters = {
+                    updateURL({ clients: [] });
+                    const newFilters: Omit<ProjectsFilters, 'page' | 'pageSize'> = {
                       ...filters,
                       clientSlugs: undefined,
-                      page: 1,
                     };
                     setFilters(newFilters);
-                    setCurrentPage(1);
                   }}
                   onMouseDown={(e) => e.preventDefault()}
                   sx={{
@@ -594,15 +574,13 @@ export default function ProjectsPageContent() {
                   onClick={() => {
                     setSelectedSizeRanges([]);
                     // Keep types when clicking All
-                    updateURL({ sizes: [], types: selectedTypes, page: 1 });
-                    const newFilters: ProjectsFilters = {
+                    updateURL({ sizes: [], types: selectedTypes });
+                    const newFilters: Omit<ProjectsFilters, 'page' | 'pageSize'> = {
                       ...filters,
                       sizeRanges: undefined,
                       constructionTypes: selectedTypes.length > 0 ? selectedTypes : undefined, // Keep types
-                      page: 1,
                     };
                     setFilters(newFilters);
-                    setCurrentPage(1);
                   }}
                   onMouseDown={(e) => e.preventDefault()}
                   sx={{
@@ -811,60 +789,17 @@ export default function ProjectsPageContent() {
           </Box>
         )}
         
-        {/* Pagination */}
-        {!projectsLoading && projectsData && projectsData.meta.pagination.pageCount > 1 && (
-          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, mt: 4 }}>
-            <Button
-              variant="outlined"
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              sx={{
-                minWidth: { xs: '36px', md: '40px' },
-                height: { xs: '36px', md: '40px' },
-                p: 0,
-              }}
-            >
-              ←
-            </Button>
-            
-            {Array.from({ length: projectsData.meta.pagination.pageCount }, (_, i) => i + 1)
-              .filter(page => {
-                if (projectsData.meta.pagination.pageCount <= 5) return true;
-                if (page === 1 || page === projectsData.meta.pagination.pageCount) return true;
-                return Math.abs(page - currentPage) <= 1;
-              })
-              .map((page, index, array) => (
-                <React.Fragment key={page}>
-                  {index > 0 && array[index - 1] !== page - 1 && (
-                    <Typography sx={{ mx: 1, alignSelf: 'center' }}>...</Typography>
-                  )}
-                  <Button
-                    variant={page === currentPage ? 'contained' : 'outlined'}
-                    onClick={() => handlePageChange(page)}
-                    sx={{
-                      minWidth: { xs: '36px', md: '40px' },
-                      height: { xs: '36px', md: '40px' },
-                      p: 0,
-                    }}
-                  >
-                    {page}
-                  </Button>
-                </React.Fragment>
-              ))}
-            
-            <Button
-              variant="outlined"
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === projectsData.meta.pagination.pageCount}
-              sx={{
-                minWidth: { xs: '36px', md: '40px' },
-                height: { xs: '36px', md: '40px' },
-                p: 0,
-              }}
-            >
-              →
-            </Button>
-          </Box>
+        {/* Infinite Scroll Trigger */}
+        {!projectsLoading && filteredProjects.length > 0 && (
+          <InfiniteScrollTrigger
+            onIntersect={() => {
+              console.log('[INFINITE_SCROLL] Fetch next page triggered');
+              fetchNextPage();
+            }}
+            hasNextPage={hasNextPage}
+            isFetchingNextPage={isFetchingNextPage}
+            isLoading={projectsLoading}
+          />
         )}
       </Container>
       

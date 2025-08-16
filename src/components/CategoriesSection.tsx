@@ -1,18 +1,23 @@
-'use client';
-
-import { Box, Typography, Link, Stack, Skeleton } from '@mui/material';
+import React from 'react';
+import { Box, Typography, Link, Stack } from '@mui/material';
 import ChevronRightIcon from '@/components/icons/ChevronRightIcon';
 import NextLink from 'next/link';
-import { useCategories } from '@/hooks/use-categories';
+import { categoriesApi } from '@/lib/api/categories';
 
-export default function CategoriesSection() {
-  const { data, isLoading } = useCategories({ pageSize: 10 });
+export default async function CategoriesSection() {
+  let categories: Array<{ id: string; name: string; href: string; }> = [];
   
-  const categories = data?.data.map(cat => ({
-    id: cat.slug,
-    name: cat.title,
-    href: `/articles/categories/${cat.slug}`,
-  })) || [];
+  try {
+    const data = await categoriesApi.getCategories({ pageSize: 10 });
+    categories = data.data.map(cat => ({
+      id: cat.slug,
+      name: cat.title,
+      href: `/articles/categories/${cat.slug}`,
+    }));
+  } catch (error) {
+    console.error('Error loading categories:', error);
+  }
+  
   return (
     <Box
       data-id="categories-section"
@@ -55,14 +60,7 @@ export default function CategoriesSection() {
           gap: '0.5rem',
         }}
       >
-        {isLoading ? (
-          <>
-            <Skeleton variant="text" width="100%" height={40} />
-            <Skeleton variant="text" width="100%" height={40} />
-            <Skeleton variant="text" width="100%" height={40} />
-          </>
-        ) : (
-          categories.map((category, index) => (
+        {categories.map((category, index) => (
           <Link
             key={category.id}
             component={NextLink}
@@ -111,8 +109,7 @@ export default function CategoriesSection() {
               }} 
             />
           </Link>
-        ))
-        )}
+        ))}
       </Stack>
     </Box>
   );

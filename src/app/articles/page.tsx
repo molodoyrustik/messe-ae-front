@@ -11,6 +11,7 @@ import ArticleCard from '@/components/ArticleCard';
 import BigArticle from '@/components/BigArticle';
 import CategoriesSection from '@/components/CategoriesSection';
 import ArticleListItem from '@/components/ArticleListItem';
+import ArticlesInfiniteList from '@/components/ArticlesInfiniteList';
 import { articlesApi } from '@/lib/api/articles';
 import { formatArticleDate } from '@/utils/date';
 import Link from 'next/link';
@@ -216,36 +217,8 @@ export default async function ArticlesPage() {
             </Box>
           </Box>
 
-          {/* Load More Button - ведет на накопительную страницу */}
-          {hasMore && (
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: { xs: '3rem', md: '3.75rem' } }}>
-              <Button
-                component={Link}
-                href="/articles/page/2"
-                variant="outlined"
-                sx={{
-                  color: '#656CAF',
-                  borderColor: '#656CAF',
-                  fontFamily: 'Roboto',
-                  fontWeight: 400,
-                  fontSize: '1rem',
-                  lineHeight: '1.5rem',
-                  letterSpacing: '0.02em',
-                  px: '2rem',
-                  py: '0.75rem',
-                  borderRadius: '0.5rem',
-                  textTransform: 'none',
-                  '&:hover': {
-                    backgroundColor: '#656CAF',
-                    color: '#FFFFFF',
-                    borderColor: '#656CAF',
-                  },
-                }}
-              >
-                Load more
-              </Button>
-            </Box>
-          )}
+          {/* Infinite Scroll Articles */}
+          {hasMore && <ArticlesInfiniteList />}
         </Box>
       </Container>
 

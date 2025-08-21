@@ -6,6 +6,7 @@ interface InfiniteScrollTriggerProps {
   hasNextPage: boolean;
   isFetchingNextPage: boolean;
   isLoading: boolean;
+  contentType?: string; // e.g., 'projects', 'articles'
 }
 
 export default function InfiniteScrollTrigger({
@@ -13,6 +14,7 @@ export default function InfiniteScrollTrigger({
   hasNextPage,
   isFetchingNextPage,
   isLoading,
+  contentType = 'projects',
 }: InfiniteScrollTriggerProps) {
   const triggerRef = useRef<HTMLDivElement>(null);
 
@@ -51,7 +53,7 @@ export default function InfiniteScrollTrigger({
             color: '#666',
           }}
         >
-          All projects loaded
+          All {contentType} loaded
         </Typography>
       </Box>
     );
@@ -79,7 +81,7 @@ export default function InfiniteScrollTrigger({
               color: '#666',
             }}
           >
-            Loading more projects...
+            Loading more {contentType}...
           </Typography>
         </Box>
       )}

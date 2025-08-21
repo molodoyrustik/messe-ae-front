@@ -1,7 +1,8 @@
 import React, { Suspense } from 'react';
 import { Metadata } from 'next';
 import { Box, CircularProgress } from '@mui/material';
-import ProjectsPageContent from './page-content';
+import ProjectsHybridContent from './ProjectsHybridContent';
+import { projectsApi } from '@/lib/api/projects';
 
 // ISR - revalidate every 300 seconds (5 minutes) 
 export const revalidate = 300;
@@ -22,7 +23,22 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ProjectsPage() {
+export default async function ProjectsPage() {
+  // Load first 12 projects on server (no filters)
+  let initialProjects = null;
+  let error = null;
+
+  try {
+    const response = await projectsApi.getProjects({
+      page: 1,
+      pageSize: 12,
+    });
+    initialProjects = response;
+  } catch (e) {
+    error = e;
+    console.error('Error loading initial projects:', e);
+  }
+
   return (
     <Suspense 
       fallback={
@@ -36,7 +52,10 @@ export default function ProjectsPage() {
         </Box>
       }
     >
-      <ProjectsPageContent />
+      <ProjectsHybridContent 
+        initialProjects={initialProjects}
+        serverError={error}
+      />
     </Suspense>
   );
 }

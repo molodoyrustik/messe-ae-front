@@ -1,6 +1,6 @@
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
 import { projectsApi } from '@/lib/api/projects';
-import { ProjectsFilters } from '@/types/api';
+import { ProjectsFilters, ProjectsResponse } from '@/types/api';
 
 export const useProjects = (filters?: ProjectsFilters) => {
   return useQuery({
@@ -9,11 +9,18 @@ export const useProjects = (filters?: ProjectsFilters) => {
   });
 };
 
-export const useInfiniteProjects = (filters?: Omit<ProjectsFilters, 'page'>) => {
+export const useInfiniteProjects = (
+  filters?: Omit<ProjectsFilters, 'page'>,
+  initialData?: ProjectsResponse
+) => {
+  // If we have filters, start from page 1 (ignore initial data)
+  // If no filters and we have initial data, start from page 2
+  const hasFilters = filters && Object.keys(filters).length > 0;
+  const startPage = (!hasFilters && initialData) ? 2 : 1;
+  
   return useInfiniteQuery({
     queryKey: ['infinite-projects', filters],
-    queryFn: ({ pageParam = 1 }) => {
-      
+    queryFn: ({ pageParam = startPage }) => {
       return projectsApi.getProjects({
         ...filters,
         page: pageParam,
@@ -23,14 +30,21 @@ export const useInfiniteProjects = (filters?: Omit<ProjectsFilters, 'page'>) => 
       });
     },
     getNextPageParam: (lastPage, allPages) => {
-      const currentPage = allPages.length;
+      // Account for initial data offset when calculating next page
+      const pageOffset = (!hasFilters && initialData) ? 1 : 0;
+      const currentPage = allPages.length + pageOffset;
       const totalPages = lastPage.meta.pagination.pageCount;
       const hasNext = currentPage < totalPages;
       
       // Return next page number if there are more pages, otherwise undefined
       return hasNext ? currentPage + 1 : undefined;
     },
-    initialPageParam: 1,
+    initialPageParam: startPage,
+    // Use initial data as first page if no filters
+    initialData: (!hasFilters && initialData) ? {
+      pages: [initialData],
+      pageParams: [1],
+    } : undefined,
   });
 };
 

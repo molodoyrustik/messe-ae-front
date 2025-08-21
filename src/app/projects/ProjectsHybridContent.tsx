@@ -23,7 +23,7 @@ import FilterIcon from '@/components/icons/FilterIcon';
 import InfiniteScrollTrigger from '@/components/InfiniteScrollTrigger';
 import { useInfiniteProjects } from '@/hooks/use-projects';
 import { useClientsWithProjectCounts } from '@/hooks/use-clients';
-import { ProjectsFilters } from '@/types/api';
+import { ProjectsFilters, ProjectsResponse } from '@/types/api';
 
 const sizeRanges = [
   { label: '< 50 m²', value: { min: 0, max: 49 } },
@@ -32,7 +32,15 @@ const sizeRanges = [
   { label: '> 300 m²', value: { min: 301, max: 999999 } },
 ];
 
-export default function ProjectsPageContent() {
+interface ProjectsHybridContentProps {
+  initialProjects?: ProjectsResponse | null;
+  serverError?: any;
+}
+
+export default function ProjectsHybridContent({ 
+  initialProjects, 
+  serverError 
+}: ProjectsHybridContentProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const searchParams = useSearchParams();
@@ -112,7 +120,7 @@ export default function ProjectsPageContent() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useInfiniteProjects(filters);
+  } = useInfiniteProjects(filters, initialProjects);
   const { data: clientsData, isLoading: clientsLoading } = useClientsWithProjectCounts();
   
   // Sync filters with URL params when they're set initially
@@ -291,9 +299,10 @@ export default function ProjectsPageContent() {
       
       <Container maxWidth="xl" sx={{ flex: 1, px: { xs: '1rem', md: '2.5rem' }, pt: { xs: '1.5rem', md: '3.75rem' }, pb: { xs: 5, md: 7.5 } }}>
         {/* Error State */}
-        {projectsError && (
+        {(projectsError || serverError) && (
           <Alert severity="error" sx={{ mb: 3 }}>
             Failed to load projects. Please try again later.
+            {serverError && !projectsError && ' (Server error during initial load)'}
           </Alert>
         )}
         
@@ -778,7 +787,7 @@ export default function ProjectsPageContent() {
         )}
         
         {/* No Results */}
-        {!projectsLoading && filteredProjects.length === 0 && !projectsError && (
+        {!projectsLoading && filteredProjects.length === 0 && !projectsError && !serverError && (
           <Box sx={{ textAlign: 'center', py: 8 }}>
             <Typography variant="h5" sx={{ mb: 2, color: '#666' }}>
               No projects found

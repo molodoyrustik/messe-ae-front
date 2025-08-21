@@ -3,7 +3,6 @@ import {
   Box,
   Container,
   Typography,
-  Button,
 } from '@mui/material';
 import Header from '@/components/Header';
 import FooterSection from '@/components/landing/FooterSection';
@@ -14,7 +13,6 @@ import ArticleListItem from '@/components/ArticleListItem';
 import ArticlesInfiniteList from '@/components/ArticlesInfiniteList';
 import { articlesApi } from '@/lib/api/articles';
 import { formatArticleDate } from '@/utils/date';
-import Link from 'next/link';
 
 // ISR - revalidate every 300 seconds (5 minutes) 
 export const revalidate = 300;

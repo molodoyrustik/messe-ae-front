@@ -34,7 +34,7 @@ const sizeRanges = [
 
 interface ProjectsHybridContentProps {
   initialProjects?: ProjectsResponse | null;
-  serverError?: any;
+  serverError?: Error | null;
 }
 
 export default function ProjectsHybridContent({ 

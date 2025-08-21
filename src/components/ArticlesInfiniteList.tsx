@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Box, useMediaQuery, useTheme } from '@mui/material';
+import { Box } from '@mui/material';
 import ArticleCard from '@/components/ArticleCard';
 import ArticleListItem from '@/components/ArticleListItem';
 import InfiniteScrollTrigger from '@/components/InfiniteScrollTrigger';
@@ -14,8 +14,6 @@ interface ArticlesInfiniteListProps {
 }
 
 export default function ArticlesInfiniteList({ filters }: ArticlesInfiniteListProps) {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   
   const {
     data,
@@ -71,7 +69,7 @@ export default function ArticlesInfiniteList({ filters }: ArticlesInfiniteListPr
           mt: '1.5rem',
         }}
       >
-        {allArticles.map((article, index) => (
+        {allArticles.map((article) => (
           <ArticleListItem 
             key={article.id} 
             article={{

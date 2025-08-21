@@ -120,7 +120,7 @@ export default function ProjectsHybridContent({
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useInfiniteProjects(filters, initialProjects);
+  } = useInfiniteProjects(filters, initialProjects || undefined);
   const { data: clientsData, isLoading: clientsLoading } = useClientsWithProjectCounts();
   
   // Sync filters with URL params when they're set initially

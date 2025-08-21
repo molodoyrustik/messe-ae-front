@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 export default async function ProjectsPage() {
   // Load first 12 projects on server (no filters)
   let initialProjects = null;
-  let error = null;
+  let error: Error | null = null;
 
   try {
     const response = await projectsApi.getProjects({
@@ -35,7 +35,7 @@ export default async function ProjectsPage() {
     });
     initialProjects = response;
   } catch (e) {
-    error = e;
+    error = e instanceof Error ? e : new Error('Failed to load projects');
     console.error('Error loading initial projects:', e);
   }
 

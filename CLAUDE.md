@@ -205,6 +205,23 @@ When implementing features or fixes that establish new patterns for the entire c
 - Examples: `data-advantage-card="worldwide-recognition"`, `data-learn-more`
 - Helps identify elements in browser DevTools and automated testing
 
+### Sitemap URL Generation (Established 2025-08-28)
+
+- Projects don't have a `slug` field in the API, so URLs are generated dynamically
+- Pattern: `${clientSlug}-${formattedSize}m2-${documentId}`
+- Client names are sanitized: lowercase, non-alphanumeric replaced with hyphens
+- Size uses `formatTotalSizeForUrl()` utility to handle null/undefined values
+- Articles use their existing `slug` field directly
+
+### Project Image Display (Established 2025-08-28)
+
+- **Project listing page**: Shows 1 image per project (first image from array)
+- **Project detail page**: Shows ALL available images in responsive grid
+  - Mobile: 1 column
+  - Tablet: 2 columns  
+  - Desktop: 3 columns
+- No artificial limit on image count - displays full `project.images` array
+
 ## Layout Guidelines
 
 ### Page Spacing and Alignment

@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next';
 import { projectsApi } from '@/lib/api/projects';
 import { articlesApi } from '@/lib/api/articles';
+import { formatTotalSizeForUrl } from '@/utils/projectSizes';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://messe.ae';
@@ -43,12 +44,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let projectPages: MetadataRoute.Sitemap = [];
   try {
     const projectsResponse = await projectsApi.getProjects({ pageSize: 100 });
-    projectPages = projectsResponse.data.map((project) => ({
-      url: `${baseUrl}/projects/${project.slug}`,
-      lastModified: new Date(project.updatedAt),
-      changeFrequency: 'monthly' as const,
-      priority: 0.6,
-    }));
+    projectPages = projectsResponse.data.map((project) => {
+      // Generate slug dynamically since projects don't have a slug field
+      const clientSlug = project.client?.name
+        ? project.client.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+        : 'client';
+      const formattedSize = formatTotalSizeForUrl(project);
+      const slug = `${clientSlug}-${formattedSize}m2-${project.documentId}`;
+      
+      return {
+        url: `${baseUrl}/projects/${slug}`,
+        lastModified: new Date(project.updatedAt),
+        changeFrequency: 'monthly' as const,
+        priority: 0.6,
+      };
+    });
   } catch (error) {
     console.error('Error fetching projects for sitemap:', error);
   }

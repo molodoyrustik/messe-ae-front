@@ -421,7 +421,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
                 </Box>
               </Box>
 
-              {/* Three images in a row */}
+              {/* All project images */}
               <Box 
                 sx={{ 
                   display: 'grid',
@@ -434,7 +434,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
                   width: '100%',
                 }}
               >
-                {project.images.slice(0, 3).map((image, index) => (
+                {project.images.map((image, index) => (
                   <Box key={image.id || index} sx={{ position: 'relative' }}>
                     <Image
                       src={

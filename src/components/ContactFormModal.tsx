@@ -9,7 +9,7 @@ import {
   IconButton,
   Drawer,
 } from "@mui/material";
-import { ContractForm } from "./ContractForm";
+import { ContractFormPartytown } from "./ContractFormPartytown";
 import CloseIcon from "@mui/icons-material/Close";
 
 interface ContactFormModalProps {
@@ -68,7 +68,7 @@ export const ContactFormModal = ({ open, onClose }: ContactFormModalProps) => {
               WebkitOverflowScrolling: "touch",
             }}
           >
-            <ContractForm type="modal" />
+            <ContractFormPartytown type="modal" />
           </Box>
         </Box>
       </Drawer>
@@ -99,7 +99,7 @@ export const ContactFormModal = ({ open, onClose }: ContactFormModalProps) => {
         >
           <CloseIcon />
         </IconButton>
-        <ContractForm type="modal" />
+        <ContractFormPartytown type="modal" />
       </DialogContent>
     </Dialog>
   );

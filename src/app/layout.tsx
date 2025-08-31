@@ -4,7 +4,7 @@ import QueryProvider from "@/components/QueryProvider";
 import EmotionRegistry from "@/lib/emotion-registry";
 import { MobileMenuProvider } from "@/contexts/MobileMenuContext";
 import { Roboto } from "next/font/google";
-import GoogleAnalytics from "@/components/GoogleAnalytics";
+import { DeferredScripts } from "@/components/DeferredScripts";
 import { ResourceHints } from "@/components/ResourceHints";
 
 const roboto = Roboto({
@@ -92,6 +92,18 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <meta name="emotion-insertion-point" content="" />
+        <link
+          rel="preload"
+          href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap"
+          as="style"
+          onLoad="this.onload=null;this.rel='stylesheet'"
+        />
+        <noscript>
+          <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap"
+          />
+        </noscript>
         <ResourceHints />
       </head>
       <body className={roboto.className}>
@@ -102,7 +114,7 @@ export default function RootLayout({
             </ThemeProvider>
           </QueryProvider>
         </EmotionRegistry>
-        <GoogleAnalytics />
+        <DeferredScripts />
       </body>
     </html>
   );

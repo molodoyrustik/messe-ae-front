@@ -8,6 +8,35 @@ const nextConfig: NextConfig = {
   // Enable compression for better performance
   compress: true,
   
+  // Partytown configuration
+  async headers() {
+    return [
+      {
+        source: '/~partytown/:path*',
+        headers: [
+          {
+            key: 'Cross-Origin-Embedder-Policy',
+            value: 'credentialless',
+          },
+          {
+            key: 'Cross-Origin-Opener-Policy',
+            value: 'same-origin',
+          },
+        ],
+      },
+      // Allow cross-origin requests for third-party scripts
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'Cross-Origin-Embedder-Policy',
+            value: 'unsafe-none',
+          },
+        ],
+      },
+    ];
+  },
+  
   // Image optimization
   images: {
     formats: ['image/webp', 'image/avif'],

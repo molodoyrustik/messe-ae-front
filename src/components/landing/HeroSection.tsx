@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { useState, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
+import Head from "next/head";
 import { ClientOnly } from "@/components/ClientOnly";
 import { SafeVideoPlayer } from "@/components/SafeVideoPlayer";
 
@@ -27,6 +28,9 @@ const HeroSection = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const heroRef = useRef<HTMLDivElement>(null);
   const heroButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Preload critical images - use WebP for better compression
+  const heroImage = isMobile ? "/images/hero-poster-mobile-cropped.webp" : "/images/hero-poster.webp";
 
   useEffect(() => {
     if (!isMobile) return;
@@ -100,24 +104,33 @@ const HeroSection = () => {
   }, [isMobile]);
 
   return (
-    <Box
-      ref={heroRef}
-      sx={{
-        width: "100vw",
-        height: { xs: "calc(100vh - 3.375rem)", md: "calc(100vh - 128px)" },
-        position: "relative",
-        overflow: "hidden",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
+    <>
+      <Head>
+        <link
+          rel="preload"
+          as="image"
+          href={heroImage}
+          fetchPriority="high"
+        />
+      </Head>
+      <Box
+        ref={heroRef}
+        sx={{
+          width: "100vw",
+          height: { xs: "calc(100vh - 3.375rem)", md: "calc(100vh - 128px)" },
+          position: "relative",
+          overflow: "hidden",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
       {/* Video Background */}
       <ClientOnly>
         <SafeVideoPlayer
           src="/videos/hero-video-optimized.mp4"
           mobileSrc="/videos/hero-video-mobile.mp4"
-          poster="/images/hero-poster.jpg"
-          mobilePoster="/images/hero-poster-mobile-cropped.jpg"
+          poster="/images/hero-poster.webp"
+          mobilePoster="/images/hero-poster-mobile-cropped.webp"
         />
       </ClientOnly>
 
@@ -436,7 +449,8 @@ const HeroSection = () => {
         open={contactModalOpen}
         onClose={() => setContactModalOpen(false)}
       />
-    </Box>
+      </Box>
+    </>
   );
 };
 

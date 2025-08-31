@@ -2,6 +2,7 @@
 
 import { Box, Typography } from '@mui/material';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Project } from '@/types/api';
 import { STRAPI_BASE_URL } from '@/lib/api/config';
 import { formatProjectSizeDisplay, formatTotalSizeForUrl, hasDisplaySize } from '@/utils/projectSizes';
@@ -49,17 +50,29 @@ export default function ProjectCard({ project }: ProjectCardProps) {
     >
       {imageUrl ? (
         <Box
-          component="img"
-          src={imageUrl}
-          alt={project.client?.name || project.title}
           sx={{
+            position: 'relative',
             width: '100%',
             height: { xs: 240, md: 328 },
-            objectFit: 'cover',
             borderRadius: '4px',
-            transition: 'transform 0.3s ease',
+            overflow: 'hidden',
+            '& img': {
+              transition: 'transform 0.3s ease',
+            },
           }}
-        />
+        >
+          <Image
+            src={imageUrl}
+            alt={project.client?.name || project.title}
+            fill
+            style={{
+              objectFit: 'cover',
+            }}
+            priority={false}
+            quality={85}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
+        </Box>
       ) : (
         <Box
           sx={{

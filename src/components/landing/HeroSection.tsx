@@ -9,9 +9,13 @@ import {
   useTheme,
 } from "@mui/material";
 import { useState, useEffect, useRef } from "react";
-import { ContactFormModal } from "@/components/ContactFormModal";
+import dynamic from "next/dynamic";
 import { ClientOnly } from "@/components/ClientOnly";
 import { SafeVideoPlayer } from "@/components/SafeVideoPlayer";
+
+const ContactFormModal = dynamic(() => import("@/components/ContactFormModal").then(mod => ({ default: mod.ContactFormModal })), {
+  ssr: false,
+});
 
 const HeroSection = () => {
   const [showFloatingButton, setShowFloatingButton] = useState(false);

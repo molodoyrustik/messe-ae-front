@@ -27,8 +27,12 @@ import {
   Close as CloseIcon,
 } from "@mui/icons-material";
 import { useState, useEffect } from "react";
-import { ContactFormModal } from "@/components/ContactFormModal";
+import dynamic from "next/dynamic";
 import { useMobileMenu } from "@/contexts/MobileMenuContext";
+
+const ContactFormModal = dynamic(() => import("@/components/ContactFormModal").then(mod => ({ default: mod.ContactFormModal })), {
+  ssr: false,
+});
 
 // Custom Menu Item component with proper states
 const CustomMenuItem = ({

@@ -6,6 +6,7 @@ import {
 } from '@mui/material';
 import { ArrowForward } from '@mui/icons-material';
 import NextLink from 'next/link';
+import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -69,17 +70,18 @@ export default function ArticleCard({ article }: ArticleCardProps) {
             backgroundColor: '#F5F5F5',
           }}
         >
-          <Box
-            component="img"
+          <Image
             src={article.image}
             alt={article.title}
-            className="article-image"
-            sx={{
-              width: '100%',
-              height: '100%',
+            fill
+            style={{
               objectFit: 'cover',
               transition: 'transform 0.3s ease',
             }}
+            className="article-image"
+            priority={false}
+            quality={85}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         </Box>
 

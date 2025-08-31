@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import {
   Box,
   Container,
@@ -210,26 +211,23 @@ const ClientsSection = () => {
               if (isMobile) {
                 return (
                   <Box
-                    component="picture"
                     sx={{
                       height: '28px',
                       display: 'flex',
                       alignItems: 'center',
+                      position: 'relative',
+                      width: 'auto',
+                      maxWidth: '120px',
                     }}
                   >
-                    <Box
-                      component="source"
-                      srcSet={`/client-logos/${webpFilename}`}
-                      type="image/webp"
-                    />
-                    <Box
-                      component="img"
-                      src={`/client-logos/${logo.filename}`}
+                    <Image
+                      src={`/client-logos/${webpFilename}`}
                       alt={logo.name}
-                      loading="lazy"
                       width={logoSize.width}
                       height={logoSize.height}
-                      sx={{
+                      priority={false}
+                      quality={85}
+                      style={{
                         height: '28px',
                         width: 'auto',
                         maxWidth: '120px',
@@ -237,10 +235,6 @@ const ClientsSection = () => {
                         filter: 'grayscale(100%) contrast(1.2)',
                         opacity: 0.9,
                         transition: 'all 0.3s ease',
-                        imageRendering: '-webkit-optimize-contrast',
-                        WebkitImageRendering: '-webkit-optimize-contrast',
-                        backfaceVisibility: 'hidden',
-                        transform: 'translateZ(0)',
                       }}
                     />
                   </Box>
@@ -248,39 +242,34 @@ const ClientsSection = () => {
               } else {
                 return (
                   <Box
-                    component="picture"
                     sx={{
                       display: 'flex',
                       alignItems: 'center',
                       height: { sm: '36px', md: '48px' },
+                      position: 'relative',
+                      width: 'auto',
+                      maxWidth: { sm: '160px', md: '180px' },
+                      '&:hover img': {
+                        filter: 'grayscale(0%) contrast(1) !important',
+                        opacity: '1 !important',
+                      },
                     }}
                   >
-                    <Box
-                      component="source"
-                      srcSet={`/client-logos/${webpFilename}`}
-                      type="image/webp"
-                    />
-                    <Box
-                      component="img"
-                      src={`/client-logos/${logo.filename}`}
+                    <Image
+                      src={`/client-logos/${webpFilename}`}
                       alt={logo.name}
-                      loading="lazy"
                       width={logoSize.width}
                       height={logoSize.height}
-                      sx={{
-                        height: { sm: '36px', md: '48px' },
+                      priority={false}
+                      quality={85}
+                      style={{
+                        height: '100%',
                         width: 'auto',
-                        maxWidth: { sm: '160px', md: '180px' },
+                        maxWidth: '100%',
                         objectFit: 'contain',
                         filter: 'grayscale(100%) contrast(1.2)',
                         opacity: 0.7,
                         transition: 'all 0.3s ease',
-                        imageRendering: 'auto',
-                        WebkitImageRendering: 'auto',
-                        '&:hover': {
-                          filter: 'grayscale(0%) contrast(1)',
-                          opacity: 1,
-                        },
                       }}
                     />
                   </Box>

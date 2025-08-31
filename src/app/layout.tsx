@@ -93,7 +93,6 @@ export default function RootLayout({
       <head>
         <meta name="emotion-insertion-point" content="" />
         <ResourceHints />
-        <GoogleAnalytics />
       </head>
       <body className={roboto.className}>
         <EmotionRegistry>
@@ -103,6 +102,7 @@ export default function RootLayout({
             </ThemeProvider>
           </QueryProvider>
         </EmotionRegistry>
+        <GoogleAnalytics />
       </body>
     </html>
   );

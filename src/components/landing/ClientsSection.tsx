@@ -93,6 +93,49 @@ const LogoItem = styled(Box, {
 }));
 
 const ClientsSection = () => {
+  // Logo dimensions for preventing layout shift
+  const logoSizes: Record<string, { width: number; height: number }> = {
+    'abbott.png': { width: 466, height: 120 },
+    'alstom.png': { width: 606, height: 120 },
+    'amazon-web-services.png': { width: 201, height: 120 },
+    'anduril.png': { width: 655, height: 120 },
+    'aramco.png': { width: 379, height: 120 },
+    'canon.png': { width: 536, height: 120 },
+    'caterpillar.png': { width: 667, height: 120 },
+    'damen.png': { width: 596, height: 120 },
+    'diehl.png': { width: 693, height: 120 },
+    'drager.png': { width: 298, height: 120 },
+    'exxon-mobil.png': { width: 596, height: 120 },
+    'genesis.png': { width: 555, height: 120 },
+    'getinge.png': { width: 781, height: 120 },
+    'halliburton.png': { width: 1556, height: 120 },
+    'hapag-lloyd.png': { width: 778, height: 120 },
+    'hensoldt.png': { width: 497, height: 120 },
+    'infiniti.png': { width: 889, height: 120 },
+    'jaguar.png': { width: 1293, height: 120 },
+    'jeppesen.png': { width: 1157, height: 120 },
+    'john-deere.png': { width: 600, height: 120 },
+    'kaspersky.png': { width: 610, height: 120 },
+    'knds.png': { width: 409, height: 120 },
+    'konica-minolta.png': { width: 848, height: 120 },
+    'krones.png': { width: 375, height: 120 },
+    'linde.png': { width: 239, height: 120 },
+    'linet.png': { width: 649, height: 120 },
+    'lyondellbasell.png': { width: 347, height: 120 },
+    'medela.png': { width: 628, height: 120 },
+    'nissan.png': { width: 143, height: 120 },
+    'nobel-biocare.png': { width: 736, height: 120 },
+    'omv.png': { width: 423, height: 120 },
+    'porsche.png': { width: 1596, height: 120 },
+    'rational.png': { width: 478, height: 120 },
+    'red-hat.png': { width: 467, height: 120 },
+    'schneider-electric.png': { width: 574, height: 120 },
+    'siemens.png': { width: 658, height: 120 },
+    'siemens-energy.png': { width: 350, height: 120 },
+    'siemens-healthineers.png': { width: 492, height: 120 },
+    'visa.png': { width: 370, height: 120 },
+  };
+
   // Filtered logos based on user's "Yes" list
   const approvedLogos = [
     { name: 'Abbott', filename: 'abbott.png' },
@@ -160,59 +203,90 @@ const ClientsSection = () => {
       <CarouselTrack direction={direction} duration={duration} $isMobile={isMobile}>
         {logos.map((logo, index) => (
           <LogoItem key={`${lineKey}-${logo.filename}-${index}`} $isMobile={isMobile}>
-            {isMobile ? (
-              // Для мобильных используем picture с srcset
-              <Box
-                component="picture"
-                sx={{
-                  height: '28px',
-                  display: 'flex',
-                  alignItems: 'center',
-                }}
-              >
-                <Box
-                  component="img"
-                  src={`/client-logos/${logo.filename}`}
-                  srcSet={`/client-logos/${logo.filename} 1x, /client-logos/${logo.filename} 2x`}
-                  alt={logo.name}
-                  sx={{
-                    height: '28px',
-                    width: 'auto',
-                    maxWidth: '120px',
-                    objectFit: 'contain',
-                    filter: 'grayscale(100%) contrast(1.2)',
-                    opacity: 0.9,
-                    transition: 'all 0.3s ease',
-                    imageRendering: '-webkit-optimize-contrast',
-                    WebkitImageRendering: '-webkit-optimize-contrast',
-                    backfaceVisibility: 'hidden',
-                    transform: 'translateZ(0)',
-                  }}
-                />
-              </Box>
-            ) : (
-              // Для десктопа оставляем как было
-              <Box
-                component="img"
-                src={`/client-logos/${logo.filename}`}
-                alt={logo.name}
-                sx={{
-                  height: { sm: '36px', md: '48px' },
-                  width: 'auto',
-                  maxWidth: { sm: '160px', md: '180px' },
-                  objectFit: 'contain',
-                  filter: 'grayscale(100%) contrast(1.2)',
-                  opacity: 0.7,
-                  transition: 'all 0.3s ease',
-                  imageRendering: 'auto',
-                  WebkitImageRendering: 'auto',
-                  '&:hover': {
-                    filter: 'grayscale(0%) contrast(1)',
-                    opacity: 1,
-                  },
-                }}
-              />
-            )}
+            {(() => {
+              const webpFilename = logo.filename.replace('.png', '.webp');
+              const logoSize = logoSizes[logo.filename];
+              
+              if (isMobile) {
+                return (
+                  <Box
+                    component="picture"
+                    sx={{
+                      height: '28px',
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Box
+                      component="source"
+                      srcSet={`/client-logos/${webpFilename}`}
+                      type="image/webp"
+                    />
+                    <Box
+                      component="img"
+                      src={`/client-logos/${logo.filename}`}
+                      alt={logo.name}
+                      loading="lazy"
+                      width={logoSize.width}
+                      height={logoSize.height}
+                      sx={{
+                        height: '28px',
+                        width: 'auto',
+                        maxWidth: '120px',
+                        objectFit: 'contain',
+                        filter: 'grayscale(100%) contrast(1.2)',
+                        opacity: 0.9,
+                        transition: 'all 0.3s ease',
+                        imageRendering: '-webkit-optimize-contrast',
+                        WebkitImageRendering: '-webkit-optimize-contrast',
+                        backfaceVisibility: 'hidden',
+                        transform: 'translateZ(0)',
+                      }}
+                    />
+                  </Box>
+                );
+              } else {
+                return (
+                  <Box
+                    component="picture"
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      height: { sm: '36px', md: '48px' },
+                    }}
+                  >
+                    <Box
+                      component="source"
+                      srcSet={`/client-logos/${webpFilename}`}
+                      type="image/webp"
+                    />
+                    <Box
+                      component="img"
+                      src={`/client-logos/${logo.filename}`}
+                      alt={logo.name}
+                      loading="lazy"
+                      width={logoSize.width}
+                      height={logoSize.height}
+                      sx={{
+                        height: { sm: '36px', md: '48px' },
+                        width: 'auto',
+                        maxWidth: { sm: '160px', md: '180px' },
+                        objectFit: 'contain',
+                        filter: 'grayscale(100%) contrast(1.2)',
+                        opacity: 0.7,
+                        transition: 'all 0.3s ease',
+                        imageRendering: 'auto',
+                        WebkitImageRendering: 'auto',
+                        '&:hover': {
+                          filter: 'grayscale(0%) contrast(1)',
+                          opacity: 1,
+                        },
+                      }}
+                    />
+                  </Box>
+                );
+              }
+            })()}
           </LogoItem>
         ))}
       </CarouselTrack>

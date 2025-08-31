@@ -58,28 +58,9 @@ export const SafeVideoPlayer = ({
         overflow: 'hidden',
       }}
     >
-      {/* Постер как фоллбэк */}
-      {currentPoster && !isVideoLoaded && (
-        <Box
-          component="img"
-          src={currentPoster}
-          alt=""
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-          }}
-        />
-      )}
-
       {/* Видео */}
       <video
         ref={videoRef}
-        src={currentSrc}
         poster={currentPoster}
         loop
         muted
@@ -96,7 +77,10 @@ export const SafeVideoPlayer = ({
           height: '100%',
           objectFit: 'cover',
         }}
-      />
+      >
+        <source src={currentSrc} type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
     </Box>
   );
 };

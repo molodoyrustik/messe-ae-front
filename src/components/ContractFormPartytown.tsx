@@ -35,6 +35,7 @@ export const ContractFormPartytown = ({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const mountedRef = useRef(true);
+  const formCreatedRef = useRef(false);
   const formId_unique = `hubspot-form-${type}`; // Stable ID without timestamp
 
   const loadHubSpotScript = () => {
@@ -82,8 +83,8 @@ export const ContractFormPartytown = ({
 
   const createForm = async () => {
     try {
-      // Check if component is still mounted
-      if (!mountedRef.current) return;
+      // Check if component is still mounted and form not already created
+      if (!mountedRef.current || formCreatedRef.current) return;
       
       setIsLoading(true);
       setError(null);
@@ -94,11 +95,19 @@ export const ContractFormPartytown = ({
         throw new Error('Container not available');
       }
 
+      // Check if form already exists in container
+      if (container.querySelector('form')) {
+        console.log(`HubSpot form already exists for ${type}`);
+        setIsLoading(false);
+        onFormLoad?.();
+        return;
+      }
+
       // Load HubSpot script
       await loadHubSpotScript();
 
       // Check again if component is still mounted after async operation
-      if (!mountedRef.current) return;
+      if (!mountedRef.current || formCreatedRef.current) return;
 
       // Wait for HubSpot to be fully initialized 
       // Mobile devices need more time for script initialization
@@ -106,18 +115,13 @@ export const ContractFormPartytown = ({
       await new Promise(resolve => setTimeout(resolve, initDelay));
 
       // Check again if component is still mounted after delay
-      if (!mountedRef.current) return;
+      if (!mountedRef.current || formCreatedRef.current) return;
 
       if (!window.hbspt?.forms) {
         throw new Error('HubSpot forms API not available');
       }
 
-      // Clear container safely
-      if (container && container.parentNode) {
-        container.innerHTML = "";
-      }
-
-      // Create form
+      // Create form (don't clear container - let HubSpot handle it)
       window.hbspt.forms.create({
         portalId,
         formId,
@@ -125,6 +129,7 @@ export const ContractFormPartytown = ({
         target: `#${formId_unique}`,
       });
 
+      formCreatedRef.current = true;
       console.log(`HubSpot form created for ${type}`);
       
       // Only update state if still mounted
@@ -148,20 +153,11 @@ export const ContractFormPartytown = ({
     mountedRef.current = true;
     createForm();
 
-    // Cleanup function
+    // Cleanup function - DO NOT manipulate DOM, let React handle it
     return () => {
       mountedRef.current = false;
-      
-      // Clear container safely without removing scripts
-      const container = containerRef.current;
-      if (container && container.parentNode) {
-        try {
-          container.innerHTML = "";
-        } catch (e) {
-          // Ignore cleanup errors
-          console.warn('Container cleanup failed:', e);
-        }
-      }
+      formCreatedRef.current = false; // Reset form creation flag
+      // No DOM manipulation in cleanup - this prevents removeChild errors
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type]); // Don't include createForm to prevent unnecessary re-runs

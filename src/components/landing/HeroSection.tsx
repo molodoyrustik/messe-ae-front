@@ -169,19 +169,20 @@ const HeroSection = () => {
           }}
         >
           {/* Main Title */}
-          <Typography
-            variant="h1"
-            sx={{
+          <h1
+            style={{
               maxWidth: "1084px",
               fontSize: "54px",
               fontWeight: 700,
               lineHeight: "60px",
               letterSpacing: "normal",
               color: "#FFFFFF",
+              fontFamily: "Roboto, Arial, sans-serif",
+              margin: 0,
             }}
           >
             Exhibition Stand Builder & Designer in UAE and around the world
-          </Typography>
+          </h1>
 
           {/* Subtitle with mixed styling */}
           <Typography
@@ -294,19 +295,19 @@ const HeroSection = () => {
           }}
         >
           {/* Main Title - Mobile */}
-          <Typography
-            variant="h1"
-            sx={{
+          <h1
+            style={{
               fontSize: "24px",
               fontWeight: 700,
               lineHeight: "28px",
               letterSpacing: "0.01em",
               color: "#FFFFFF",
-              mb: "0.75rem", // 12px gap to subtitle
+              fontFamily: "Roboto, Arial, sans-serif",
+              margin: "0 0 12px 0",
             }}
           >
             Exhibition Stand Builder & Designer in UAE and around the world
-          </Typography>
+          </h1>
 
           {/* Subtitle with mixed styling - Mobile */}
           <Typography

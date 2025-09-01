@@ -82,17 +82,75 @@ const nextConfig: NextConfig = {
           ...config.optimization.splitChunks,
           cacheGroups: {
             ...config.optimization.splitChunks.cacheGroups,
+            // Separate heavy animation library
+            framer: {
+              test: /[\\/]node_modules[\\/]framer-motion[\\/]/,
+              chunks: 'all',
+              name: 'framer',
+              priority: 50,
+            },
+            // Separate markdown processing libraries
+            markdown: {
+              test: /[\\/]node_modules[\\/](react-markdown|remark-gfm|unified|mdast|micromark)[\\/]/,
+              chunks: 'all',
+              name: 'markdown',
+              priority: 45,
+            },
+            // Separate CSS-in-JS libraries
+            emotion: {
+              test: /[\\/]node_modules[\\/]@emotion[\\/]/,
+              chunks: 'all',
+              name: 'emotion',
+              priority: 40,
+            },
+            // Separate data fetching libraries
+            tanstack: {
+              test: /[\\/]node_modules[\\/]@tanstack[\\/]/,
+              chunks: 'all',
+              name: 'tanstack',
+              priority: 35,
+            },
+            // MUI Icons (heaviest part, used less frequently)
+            muiIcons: {
+              test: /[\\/]node_modules[\\/]@mui[\\/]icons-material[\\/]/,
+              chunks: 'all',
+              name: 'mui-icons',
+              priority: 35,
+            },
+            // MUI System (theme, sx prop, styling utilities)
+            muiSystem: {
+              test: /[\\/]node_modules[\\/]@mui[\\/](system|styled-engine|utils|base)[\\/]/,
+              chunks: 'all',
+              name: 'mui-system',
+              priority: 32,
+            },
+            // MUI Core Components (most commonly used)
+            muiCore: {
+              test: /[\\/]node_modules[\\/]@mui[\\/]material[\\/]/,
+              chunks: 'all',
+              name: 'mui-core',
+              priority: 30,
+            },
+            // Partytown (heavy web worker library)
+            partytown: {
+              test: /[\\/]node_modules[\\/]@qwik\.dev[\\/]partytown[\\/]/,
+              chunks: 'all', 
+              name: 'partytown',
+              priority: 25,
+            },
+            // React libraries
+            react: {
+              test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+              chunks: 'all',
+              name: 'react',
+              priority: 25,
+            },
+            // Remaining vendor libraries (much smaller now)
             vendor: {
               test: /[\\/]node_modules[\\/]/,
               chunks: 'all',
               name: 'vendors',
               priority: 20,
-            },
-            mui: {
-              test: /[\\/]node_modules[\\/]@mui[\\/]/,
-              chunks: 'all',
-              name: 'mui',
-              priority: 30,
             },
           },
         },

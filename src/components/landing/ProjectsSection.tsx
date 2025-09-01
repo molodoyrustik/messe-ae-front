@@ -4,7 +4,11 @@ import React, { useState } from "react";
 import { Box, Container, Typography, Button } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
-import { ContactFormModal } from "@/components/ContactFormModal";
+import dynamic from "next/dynamic";
+
+const ContactFormModal = dynamic(() => import("@/components/ContactFormModal").then(mod => ({ default: mod.ContactFormModal })), {
+  ssr: false,
+});
 
 // Project categories configuration
 const projectCategoriesConfig = [
@@ -92,8 +96,10 @@ const ProjectCard = ({ category }: { category: ProjectCategory }) => {
           src={categoryImageMap[category.id] || "/projects/placeholder.svg"}
           alt={`${category.title} projects`}
           fill
-          priority
+          loading="lazy"
           sizes="(max-width: 768px) 280px, (max-width: 1024px) 300px, 400px"
+          placeholder="blur"
+          blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
           style={{
             objectFit: "cover",
             objectPosition: "center",

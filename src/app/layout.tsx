@@ -92,18 +92,6 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <meta name="emotion-insertion-point" content="" />
-        <link
-          rel="preload"
-          href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap"
-          as="style"
-          onLoad="this.onload=null;this.rel='stylesheet'"
-        />
-        <noscript>
-          <link
-            rel="stylesheet"
-            href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap"
-          />
-        </noscript>
         <ResourceHints />
       </head>
       <body className={roboto.className}>

@@ -8,17 +8,19 @@ import {
   IconButton,
   Link,
 } from "@mui/material";
-import {
-  Instagram,
-  Facebook,
-  LinkedIn,
-  WhatsApp,
-  Phone,
-  Email,
-  LocationOn,
-} from "@mui/icons-material";
+import Instagram from "@mui/icons-material/Instagram";
+import Facebook from "@mui/icons-material/Facebook";
+import LinkedIn from "@mui/icons-material/LinkedIn";
+import WhatsApp from "@mui/icons-material/WhatsApp";
+import Phone from "@mui/icons-material/Phone";
+import Email from "@mui/icons-material/Email";
+import LocationOn from "@mui/icons-material/LocationOn";
 import Image from "next/image";
-import { ContractFormPartytown } from "../ContractFormPartytown";
+import dynamic from "next/dynamic";
+
+const ContractFormPartytown = dynamic(() => import("../ContractFormPartytown").then(mod => ({ default: mod.ContractFormPartytown })), {
+  ssr: false,
+});
 
 // Custom SVG Icons for mobile footer
 const InstagramSolid = () => (
@@ -192,6 +194,7 @@ const FooterSection = () => {
                   src="/messe-logo.png"
                   alt="Messe.ae"
                   fill
+                  loading="lazy"
                   sizes="(max-width: 768px) 60px, 162px"
                   style={{
                     objectFit: "cover",

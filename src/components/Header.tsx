@@ -18,14 +18,12 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  Facebook,
-  Instagram,
-  LinkedIn,
-  WhatsApp,
-  Email,
-  Close as CloseIcon,
-} from "@mui/icons-material";
+import Facebook from "@mui/icons-material/Facebook";
+import Instagram from "@mui/icons-material/Instagram";
+import LinkedIn from "@mui/icons-material/LinkedIn";
+import WhatsApp from "@mui/icons-material/WhatsApp";
+import Email from "@mui/icons-material/Email";
+import CloseIcon from "@mui/icons-material/Close";
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useMobileMenu } from "@/contexts/MobileMenuContext";

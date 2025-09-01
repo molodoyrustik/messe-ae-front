@@ -26,33 +26,9 @@ declare global {
 export const ContractFormPartytown = ({ type }: { type: "modal" | "footer" }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scriptReady, setScriptReady] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
-  const [shouldLoadScript, setShouldLoadScript] = useState(false);
-
-  // Intersection Observer to load script only when form is visible
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setIsVisible(true);
-            setShouldLoadScript(true);
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { rootMargin: '100px' }
-    );
-
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
 
   const createForm = useCallback(() => {
-    if (!window.hbspt?.forms || !containerRef.current || !isVisible || !scriptReady) return;
+    if (!window.hbspt?.forms || !containerRef.current || !scriptReady) return;
 
     containerRef.current.innerHTML = "";
 
@@ -62,7 +38,7 @@ export const ContractFormPartytown = ({ type }: { type: "modal" | "footer" }) =>
       region,
       target: `#hubspot-form-${type}`,
     });
-  }, [type, isVisible, scriptReady]);
+  }, [type, scriptReady]);
 
   useEffect(() => {
     createForm();
@@ -95,19 +71,16 @@ export const ContractFormPartytown = ({ type }: { type: "modal" | "footer" }) =>
           Fill the form below and our experts will contact you within 24 hours.
         </Typography>
 
-        {/* HubSpot Script with Partytown - Load only when visible */}
-        {shouldLoadScript && (
-          <Script
-            id="hsforms-partytown"
-            src="//js-eu1.hsforms.net/forms/embed/v2.js"
-            type="text/partytown"
-            strategy="lazyOnload"
-            onLoad={() => {
-              console.log("HubSpot script loaded via Partytown");
-              setScriptReady(true);
-            }}
-          />
-        )}
+        {/* HubSpot Script - Load immediately */}
+        <Script
+          id="hsforms-script"
+          src="//js-eu1.hsforms.net/forms/embed/v2.js"
+          strategy="afterInteractive"
+          onLoad={() => {
+            console.log("HubSpot script loaded");
+            setScriptReady(true);
+          }}
+        />
         <Box id={`hubspot-form-${type}`} ref={containerRef}></Box>
       </Box>
     </>

@@ -64,16 +64,27 @@ const HeroSection = () => {
     }
 
     const handleScroll = () => {
-      const contactForm = document.getElementById("contact-form");
-      if (contactForm) {
-        const formTop = contactForm.getBoundingClientRect().top;
+      // Check for footer form container - more precise targeting
+      const footerForm = document.getElementById("footer-form-container");
+      if (footerForm) {
+        const formRect = footerForm.getBoundingClientRect();
         const windowHeight = window.innerHeight;
-        const buttonHeight = 48;
-        const buttonBottom = windowHeight * 0.16 + buttonHeight;
-
-        const shouldHideButton = formTop < windowHeight - buttonBottom + 120;
-
+        
+        // Hide button when footer form container starts becoming visible
+        // Adding 100px margin so button disappears slightly before form becomes visible
+        const shouldHideButton = formRect.top < windowHeight + 100;
         setShowButtonDueToContactForm(!shouldHideButton);
+      } else {
+        // Fallback: check for footer section
+        const footerSection = document.getElementById("footer-section");
+        if (footerSection) {
+          const footerTop = footerSection.getBoundingClientRect().top;
+          const windowHeight = window.innerHeight;
+          
+          // Hide button when footer is getting close to viewport
+          const shouldHideButton = footerTop < windowHeight + 150;
+          setShowButtonDueToContactForm(!shouldHideButton);
+        }
       }
 
       // Additional checks on scroll

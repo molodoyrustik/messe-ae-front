@@ -47,6 +47,7 @@ export const LazyFooterForm = () => {
   return (
     <Box 
       ref={containerRef}
+      id="footer-form-container"
       sx={{
         minHeight: shouldLoadForm ? "auto" : "500px", // Ensure enough height to trigger observer
         width: "100%"

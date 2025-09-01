@@ -120,7 +120,7 @@ const HeroSection = () => {
         <link
           rel="preload"
           as="image"
-          href={heroImage}
+          href={`/_next/image?url=${encodeURIComponent(heroImage)}&w=1920&q=75`}
           fetchPriority="high"
         />
       </Head>
@@ -136,14 +136,12 @@ const HeroSection = () => {
         }}
       >
       {/* Video Background */}
-      <ClientOnly>
-        <SafeVideoPlayer
-          src="/videos/hero-video-optimized.mp4"
-          mobileSrc="/videos/hero-video-mobile.mp4"
-          poster="/images/hero-poster.webp"
-          mobilePoster="/images/hero-poster-mobile-cropped.webp"
-        />
-      </ClientOnly>
+      <SafeVideoPlayer
+        src="/videos/hero-video-optimized.mp4"
+        mobileSrc="/videos/hero-video-mobile.mp4"
+        poster="/images/hero-poster.webp"
+        mobilePoster="/images/hero-poster-mobile-cropped.webp"
+      />
 
       {/* Gradient Overlay */}
       <Box

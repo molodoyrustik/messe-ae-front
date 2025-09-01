@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { ContractFormPartytown } from "./ContractFormPartytown";
 import CloseIcon from "@mui/icons-material/Close";
+import { useState, useEffect } from "react";
 
 interface ContactFormModalProps {
   open: boolean;
@@ -20,6 +21,20 @@ interface ContactFormModalProps {
 export const ContactFormModal = ({ open, onClose }: ContactFormModalProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const [shouldLoadForm, setShouldLoadForm] = useState(false);
+  const [formKey, setFormKey] = useState(0); // Force re-render of form
+
+  // Load form immediately when modal opens, reset when closes
+  useEffect(() => {
+    if (open) {
+      setShouldLoadForm(true);
+    } else {
+      // Reset form state when modal closes
+      setShouldLoadForm(false);
+      // Force form re-mount on next open by changing key
+      setFormKey(prev => prev + 1);
+    }
+  }, [open]);
 
   // Mobile Bottom Sheet
   if (isMobile) {
@@ -68,7 +83,12 @@ export const ContactFormModal = ({ open, onClose }: ContactFormModalProps) => {
               WebkitOverflowScrolling: "touch",
             }}
           >
-            <ContractFormPartytown type="modal" />
+            {shouldLoadForm && (
+              <ContractFormPartytown 
+                key={`modal-mobile-${formKey}`}
+                type="modal" 
+              />
+            )}
           </Box>
         </Box>
       </Drawer>
@@ -99,7 +119,12 @@ export const ContactFormModal = ({ open, onClose }: ContactFormModalProps) => {
         >
           <CloseIcon />
         </IconButton>
-        <ContractFormPartytown type="modal" />
+        {shouldLoadForm && (
+          <ContractFormPartytown 
+            key={`modal-desktop-${formKey}`}
+            type="modal" 
+          />
+        )}
       </DialogContent>
     </Dialog>
   );

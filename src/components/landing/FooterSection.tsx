@@ -16,11 +16,7 @@ import Phone from "@mui/icons-material/Phone";
 import Email from "@mui/icons-material/Email";
 import LocationOn from "@mui/icons-material/LocationOn";
 import Image from "next/image";
-import dynamic from "next/dynamic";
-
-const ContractFormPartytown = dynamic(() => import("../ContractFormPartytown").then(mod => ({ default: mod.ContractFormPartytown })), {
-  ssr: false,
-});
+import { LazyFooterForm } from "../LazyFooterForm";
 
 // Custom SVG Icons for mobile footer
 const InstagramSolid = () => (
@@ -541,7 +537,7 @@ const FooterSection = () => {
             </Typography>
 
             {/* Contact Form */}
-            <ContractFormPartytown type="footer" />
+            <LazyFooterForm />
           </Box>
         </Box>
       </Container>

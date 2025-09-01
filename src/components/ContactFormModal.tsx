@@ -100,6 +100,8 @@ export const ContactFormModal = ({ open, onClose }: ContactFormModalProps) => {
       PaperProps={{
         sx: {
           overflow: "visible",
+          minWidth: "624px",
+          minHeight: "564px",
         },
       }}
     >

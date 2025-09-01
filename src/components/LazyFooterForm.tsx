@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Box } from "@mui/material";
+import { Box, Typography, Skeleton, Stack } from "@mui/material";
 import { ContractFormPartytown } from "./ContractFormPartytown";
 
 export const LazyFooterForm = () => {
@@ -62,28 +62,36 @@ export const LazyFooterForm = () => {
         // Placeholder to maintain layout while form loads
         <Box
           sx={{
-            height: "500px", // Increased height to ensure observer triggers
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
             backgroundColor: "#FFFFFF",
             borderRadius: "8px",
-            border: "1px solid",
-            borderColor: "grey.200",
+            width: "100%",
+            maxWidth: "664px",
+            mx: "auto",
+            p: { xs: "12px", md: 2.5 },
           }}
         >
-          {/* Loading placeholder */}
-          <Box
+          {/* Form header */}
+          <Typography
             sx={{
-              width: "100%",
-              maxWidth: "664px",
-              p: { xs: "12px", md: 2.5 },
-              textAlign: "center",
-              color: "grey.500",
+              fontWeight: 700,
+              color: "grey.800",
+              fontSize: { xs: "0.875rem", md: "1rem" },
+              lineHeight: { xs: "1rem", md: "1.5rem" },
+              letterSpacing: "tight",
+              mb: 2,
             }}
           >
-            {isObserving ? "Scroll to load form..." : "Loading form..."}
-          </Box>
+            {isObserving ? "Fill the form below and our experts will contact you within 24 hours." : "Loading form..."}
+          </Typography>
+
+          {/* Loading skeletons */}
+          <Stack spacing={2}>
+            <Skeleton variant="rectangular" height={56} animation="wave" />
+            <Skeleton variant="rectangular" height={56} animation="wave" />
+            <Skeleton variant="rectangular" height={56} animation="wave" />
+            <Skeleton variant="rectangular" height={120} animation="wave" />
+            <Skeleton variant="rectangular" height={48} animation="wave" />
+          </Stack>
         </Box>
       )}
     </Box>

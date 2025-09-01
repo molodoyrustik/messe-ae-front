@@ -1,6 +1,6 @@
 "use client";
 
-import { Typography, Box, useTheme, useMediaQuery } from "@mui/material";
+import { Typography, Box, useTheme, useMediaQuery, CircularProgress, Skeleton, Stack } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 
 const portalId = "27038193";
@@ -199,14 +199,30 @@ export const ContractFormPartytown = ({
         }}
       >
         {isLoading && (
-          <Typography
-            sx={{
-              color: "grey.500",
-              fontSize: "0.875rem",
+          <Box 
+            sx={{ 
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              py: 2
             }}
           >
-            Loading form...
-          </Typography>
+            <CircularProgress 
+              size={40} 
+              sx={{ 
+                color: 'primary.main',
+                mb: 3
+              }} 
+            />
+            <Stack spacing={2} sx={{ width: '100%' }}>
+              <Skeleton variant="rectangular" height={56} animation="wave" />
+              <Skeleton variant="rectangular" height={56} animation="wave" />
+              <Skeleton variant="rectangular" height={56} animation="wave" />
+              <Skeleton variant="rectangular" height={120} animation="wave" />
+              <Skeleton variant="rectangular" height={48} animation="wave" />
+            </Stack>
+          </Box>
         )}
         {error && (
           <Typography

@@ -95,6 +95,8 @@ export const ContactFormModal = ({ open, onClose }: ContactFormModalProps) => {
             borderTopLeftRadius: "1.25rem",
             borderTopRightRadius: "1.25rem",
             maxHeight: "90dvh",
+            minWidth: "382px",
+            minHeight: "782px",
             height: "auto",
             px: "1rem",
             py: "0.75rem",

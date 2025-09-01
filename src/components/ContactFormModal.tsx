@@ -8,6 +8,10 @@ import {
   useMediaQuery,
   IconButton,
   Drawer,
+  Typography,
+  Skeleton,
+  Stack,
+  CircularProgress,
 } from "@mui/material";
 import { ContractFormPartytown } from "./ContractFormPartytown";
 import CloseIcon from "@mui/icons-material/Close";
@@ -17,6 +21,52 @@ interface ContactFormModalProps {
   open: boolean;
   onClose: () => void;
 }
+
+// Modal form skeleton component
+const ModalFormSkeleton = () => (
+  <Box
+    sx={{
+      width: "100%",
+      maxWidth: "664px",
+      mx: "auto",
+      p: { xs: "12px", md: 2.5 },
+      backgroundColor: "#FFFFFF",
+      borderRadius: "8px",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+    }}
+  >
+    <CircularProgress 
+      size={40} 
+      sx={{ 
+        color: 'primary.main',
+        mb: 3
+      }} 
+    />
+    <Typography
+      sx={{
+        fontWeight: 700,
+        color: "grey.800",
+        fontSize: { xs: "0.875rem", md: "1rem" },
+        lineHeight: { xs: "1rem", md: "1.5rem" },
+        letterSpacing: "tight",
+        mb: 2,
+        textAlign: "center",
+        width: "100%",
+      }}
+    >
+      Fill the form below and our experts will contact you within 24 hours.
+    </Typography>
+    <Stack spacing={2} sx={{ width: "100%" }}>
+      <Skeleton variant="rectangular" height={56} animation="wave" />
+      <Skeleton variant="rectangular" height={56} animation="wave" />
+      <Skeleton variant="rectangular" height={56} animation="wave" />
+      <Skeleton variant="rectangular" height={120} animation="wave" />
+      <Skeleton variant="rectangular" height={48} animation="wave" />
+    </Stack>
+  </Box>
+);
 
 export const ContactFormModal = ({ open, onClose }: ContactFormModalProps) => {
   const theme = useTheme();
@@ -80,10 +130,12 @@ export const ContactFormModal = ({ open, onClose }: ContactFormModalProps) => {
               WebkitOverflowScrolling: "touch",
             }}
           >
-            {shouldLoadForm && (
+            {shouldLoadForm ? (
               <ContractFormPartytown 
                 type="modal" 
               />
+            ) : (
+              <ModalFormSkeleton />
             )}
           </Box>
         </Box>
@@ -117,10 +169,12 @@ export const ContactFormModal = ({ open, onClose }: ContactFormModalProps) => {
         >
           <CloseIcon />
         </IconButton>
-        {shouldLoadForm && (
+        {shouldLoadForm ? (
           <ContractFormPartytown 
             type="modal" 
           />
+        ) : (
+          <ModalFormSkeleton />
         )}
       </DialogContent>
     </Dialog>

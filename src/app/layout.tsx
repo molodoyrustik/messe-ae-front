@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   description:
     "Leading exhibition stand builder and designer in UAE. We create innovative exhibition stands, trade show displays, and event solutions worldwide. 20+ years of expertise.",
   keywords:
-    "exhibition stand builder UAE, exhibition stand designer Dubai, trade show displays, event solutions, exhibition contractor",
+    "exhibition stand contractor Dubai, exhibition stand contractor in uae, exhibition stand builder Dubai, exhibition stand builder UAE, exhibition company Dubai, exhibition stand, exhibition display stand, display stand exhibition, stand in exhibition, expo stand design, exhibition stand design in dubai, exhibition stand design, design of exhibition stand, exhibition design stand, exhibition company UAE, exhibition stand design UAE, exhibition stand builder, dubai exhibition stand contractor, exhibition contractors in dubai, expo stand builders, exhibition builder dubai",
   authors: [{ name: "Messe.ae" }],
   creator: "Messe.ae",
   publisher: "Messe.ae",

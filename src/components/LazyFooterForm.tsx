@@ -54,7 +54,6 @@ export const LazyFooterForm = () => {
     >
       {shouldLoadForm ? (
         <ContractFormPartytown 
-          key={`footer-${Date.now()}`}
           type="footer" 
           onFormLoad={() => console.log('Footer form loaded successfully')}
         />

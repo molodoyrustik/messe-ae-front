@@ -34,20 +34,30 @@ export const ContractFormPartytown = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const scriptRef = useRef<HTMLScriptElement | null>(null);
-  const formId_unique = `hubspot-form-${type}-${Date.now()}`;
+  const mountedRef = useRef(true);
+  const formId_unique = `hubspot-form-${type}`; // Stable ID without timestamp
 
   const loadHubSpotScript = () => {
     return new Promise<void>((resolve, reject) => {
-      // Check if script already exists and HubSpot is available
+      // Check if HubSpot is already loaded
       if (window.hbspt?.forms) {
         resolve();
         return;
       }
 
-      // Remove any existing script
-      if (scriptRef.current) {
-        scriptRef.current.remove();
+      // Check if script is already loading/loaded
+      const existingScript = document.querySelector('script[src*="hsforms.net"]');
+      if (existingScript) {
+        // Script exists, wait for HubSpot to be available
+        const checkHubSpot = () => {
+          if (window.hbspt?.forms) {
+            resolve();
+          } else {
+            setTimeout(checkHubSpot, 100);
+          }
+        };
+        checkHubSpot();
+        return;
       }
 
       // Create new script element
@@ -66,34 +76,46 @@ export const ContractFormPartytown = ({
         reject(new Error('Failed to load HubSpot script'));
       };
 
-      scriptRef.current = script;
       document.head.appendChild(script);
     });
   };
 
   const createForm = async () => {
     try {
+      // Check if component is still mounted
+      if (!mountedRef.current) return;
+      
       setIsLoading(true);
       setError(null);
+
+      // Store container ref in variable to avoid null access during async operations
+      const container = containerRef.current;
+      if (!container) {
+        throw new Error('Container not available');
+      }
 
       // Load HubSpot script
       await loadHubSpotScript();
 
-      // Wait a bit for HubSpot to be fully initialized 
+      // Check again if component is still mounted after async operation
+      if (!mountedRef.current) return;
+
+      // Wait for HubSpot to be fully initialized 
       // Mobile devices need more time for script initialization
       const initDelay = isMobile ? 300 : 100;
       await new Promise(resolve => setTimeout(resolve, initDelay));
+
+      // Check again if component is still mounted after delay
+      if (!mountedRef.current) return;
 
       if (!window.hbspt?.forms) {
         throw new Error('HubSpot forms API not available');
       }
 
-      if (!containerRef.current) {
-        throw new Error('Container not available');
+      // Clear container safely
+      if (container && container.parentNode) {
+        container.innerHTML = "";
       }
-
-      // Clear container
-      containerRef.current.innerHTML = "";
 
       // Create form
       window.hbspt.forms.create({
@@ -104,34 +126,45 @@ export const ContractFormPartytown = ({
       });
 
       console.log(`HubSpot form created for ${type}`);
-      setIsLoading(false);
-      onFormLoad?.();
+      
+      // Only update state if still mounted
+      if (mountedRef.current) {
+        setIsLoading(false);
+        onFormLoad?.();
+      }
 
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-      console.error(`Error creating HubSpot form for ${type}:`, errorMessage);
-      setError(errorMessage);
-      setIsLoading(false);
+      // Only update state if still mounted
+      if (mountedRef.current) {
+        const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+        console.error(`Error creating HubSpot form for ${type}:`, errorMessage);
+        setError(errorMessage);
+        setIsLoading(false);
+      }
     }
   };
 
   useEffect(() => {
+    mountedRef.current = true;
     createForm();
 
     // Cleanup function
     return () => {
-      if (scriptRef.current) {
-        scriptRef.current.remove();
-        scriptRef.current = null;
-      }
-      // Save ref to variable for cleanup
+      mountedRef.current = false;
+      
+      // Clear container safely without removing scripts
       const container = containerRef.current;
-      if (container) {
-        container.innerHTML = "";
+      if (container && container.parentNode) {
+        try {
+          container.innerHTML = "";
+        } catch (e) {
+          // Ignore cleanup errors
+          console.warn('Container cleanup failed:', e);
+        }
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [type]); // createForm is not included to prevent unnecessary re-runs
+  }, [type]); // Don't include createForm to prevent unnecessary re-runs
 
   return (
     <Box

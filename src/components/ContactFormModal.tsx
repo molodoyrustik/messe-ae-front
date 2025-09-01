@@ -22,17 +22,14 @@ export const ContactFormModal = ({ open, onClose }: ContactFormModalProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [shouldLoadForm, setShouldLoadForm] = useState(false);
-  const [formKey, setFormKey] = useState(0); // Force re-render of form
 
-  // Load form immediately when modal opens, reset when closes
+  // Load form when modal opens, reset when it closes
   useEffect(() => {
     if (open) {
       setShouldLoadForm(true);
     } else {
-      // Reset form state when modal closes
+      // Reset form state when modal closes to prepare for next open
       setShouldLoadForm(false);
-      // Force form re-mount on next open by changing key
-      setFormKey(prev => prev + 1);
     }
   }, [open]);
 
@@ -85,7 +82,6 @@ export const ContactFormModal = ({ open, onClose }: ContactFormModalProps) => {
           >
             {shouldLoadForm && (
               <ContractFormPartytown 
-                key={`modal-mobile-${formKey}`}
                 type="modal" 
               />
             )}
@@ -121,7 +117,6 @@ export const ContactFormModal = ({ open, onClose }: ContactFormModalProps) => {
         </IconButton>
         {shouldLoadForm && (
           <ContractFormPartytown 
-            key={`modal-desktop-${formKey}`}
             type="modal" 
           />
         )}

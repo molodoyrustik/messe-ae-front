@@ -1,46 +1,22 @@
-"use client";
+import { Metadata } from 'next';
+import HomePage from './home-page';
 
-import { Box } from "@mui/material";
-import Header from "@/components/Header";
-import HeroSection from "@/components/landing/HeroSection";
-import ClientsSection from "@/components/landing/ClientsSection";
-import AdvantagesSection from "@/components/landing/AdvantagesSection";
-import AwardsSection from "@/components/landing/AwardsSection";
-import ExpoglobalSection from "@/components/landing/ExpoglobalSection";
-import ProjectsSection from "@/components/landing/ProjectsSection";
-import ParallaxSection from "@/components/landing/ParallaxSection";
-import FooterSection from "@/components/landing/FooterSection";
-import JsonLd from "@/components/JsonLd";
-import {
-  organizationSchema,
-  websiteSchema,
-  serviceSchema,
-} from "@/lib/structured-data";
+export const metadata: Metadata = {
+  title: 'Exhibition Stand Builder & Designer in UAE | Messe.ae',
+  description: 'Leading exhibition stand builder and designer in UAE. We create innovative exhibition stands, trade show displays, and event solutions worldwide. 20+ years of expertise.',
+  openGraph: {
+    title: 'Messe.ae - Exhibition Stand Builder & Designer in UAE',
+    description: 'Leading exhibition stand builder and designer in UAE. We create innovative exhibition stands, trade show displays, and event solutions worldwide.',
+    url: 'https://messe.ae',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Messe.ae - Exhibition Stand Builder & Designer in UAE',
+    description: 'Leading exhibition stand builder and designer in UAE. We create innovative exhibition stands, trade show displays, and event solutions worldwide.',
+  },
+};
 
-export default function HomePage() {
-  return (
-    <>
-      {/* Structured Data */}
-      <JsonLd data={organizationSchema} />
-      <JsonLd data={websiteSchema} />
-      <JsonLd data={serviceSchema} />
-
-      <Box sx={{ minHeight: "100vh" }}>
-        {/* Header */}
-        <Header />
-
-        {/* Main Landing Sections */}
-        <Box component="main">
-          <HeroSection />
-          <ClientsSection />
-          <ProjectsSection />
-          <ParallaxSection />
-          <AdvantagesSection />
-          <AwardsSection />
-          <ExpoglobalSection />
-          <FooterSection />
-        </Box>
-      </Box>
-    </>
-  );
+export default function Page() {
+  return <HomePage />;
 }

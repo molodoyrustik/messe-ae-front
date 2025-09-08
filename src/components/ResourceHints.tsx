@@ -1,13 +1,7 @@
 export const ResourceHints = () => {
   return (
     <>
-      {/* High priority preload for hero poster images */}
-      <link
-        rel="preload"
-        as="image"
-        fetchPriority="high"
-        href="/images/hero-poster.webp"
-      />
+      {/* Hero poster preloading - Next.js Image handles desktop, manual preload for mobile */}
       <link
         rel="preload"
         as="image"

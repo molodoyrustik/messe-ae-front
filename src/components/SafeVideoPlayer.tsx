@@ -79,7 +79,7 @@ export const SafeVideoPlayer = ({
           alt="Video poster"
           fill
           priority
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
+          sizes="100vw"
           quality={75}
           style={{
             objectFit: 'cover',

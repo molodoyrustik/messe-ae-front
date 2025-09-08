@@ -28,7 +28,9 @@ import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useMobileMenu } from "@/contexts/MobileMenuContext";
 
-const ContactFormModal = dynamic(() => import("@/components/ContactFormModal").then(mod => ({ default: mod.ContactFormModal })));
+const ContactFormModal = dynamic(() => import("@/components/ContactFormModal").then(mod => ({ default: mod.ContactFormModal })), {
+  loading: () => null // No loading indicator to prevent flash
+});
 
 // Custom Menu Item component with proper states
 const CustomMenuItem = ({
@@ -120,6 +122,7 @@ const SocialIcons = () => {
         target="_blank"
         rel="noopener noreferrer"
         size="small"
+        aria-label="Follow us on Instagram"
         sx={iconStyle}
       >
         <Instagram sx={{ fontSize: 20 }} />
@@ -130,6 +133,7 @@ const SocialIcons = () => {
         target="_blank"
         rel="noopener noreferrer"
         size="small"
+        aria-label="Follow us on Facebook"
         sx={iconStyle}
       >
         <Facebook sx={{ fontSize: 20 }} />
@@ -140,6 +144,7 @@ const SocialIcons = () => {
         target="_blank"
         rel="noopener noreferrer"
         size="small"
+        aria-label="Connect with us on LinkedIn"
         sx={iconStyle}
       >
         <LinkedIn sx={{ fontSize: 20 }} />
@@ -150,6 +155,7 @@ const SocialIcons = () => {
         target="_blank"
         rel="noopener noreferrer"
         size="small"
+        aria-label="Message us on WhatsApp"
         sx={iconStyle}
       >
         <WhatsApp sx={{ fontSize: 20 }} />
@@ -158,6 +164,7 @@ const SocialIcons = () => {
         component="a"
         href="mailto:hello@messe.ae"
         size="small"
+        aria-label="Send us an email"
         sx={iconStyle}
       >
         <Email sx={{ fontSize: 20 }} />
@@ -660,6 +667,7 @@ const Header = () => {
             {/* Hamburger Menu - Mobile only */}
             <IconButton
               onClick={() => setDrawerOpen(true)}
+              aria-label="Open menu"
               sx={{
                 position: "absolute",
                 right: 0,
@@ -764,7 +772,10 @@ const Header = () => {
               </Box>
             </Link>
 
-            <IconButton onClick={() => setDrawerOpen(false)}>
+            <IconButton 
+              onClick={() => setDrawerOpen(false)}
+              aria-label="Close menu"
+            >
               <CloseIcon />
             </IconButton>
           </Box>

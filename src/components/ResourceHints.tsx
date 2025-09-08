@@ -1,12 +1,13 @@
 export const ResourceHints = () => {
   return (
     <>
-      {/* Hero poster preloading - Both images for better mobile performance */}
+      {/* Hero poster preloading - Mobile image with media query */}
       <link
         rel="preload"
         as="image"
         fetchPriority="high"
         href="/images/hero-poster-mobile-cropped.webp"
+        media="(max-width: 899px)"
       />
 
       {/* Preconnect to Strapi API for faster API calls */}

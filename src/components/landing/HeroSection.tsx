@@ -123,6 +123,12 @@ const HeroSection = () => {
           href={`/_next/image?url=${encodeURIComponent(heroImage)}&w=1920&q=75`}
           fetchPriority="high"
         />
+        <link
+          rel="preload"
+          as="video"
+          href={isMobile ? "/videos/hero-video-mobile.mp4" : "/videos/hero-video-optimized.mp4"}
+          type="video/mp4"
+        />
       </Head>
       <Box
         ref={heroRef}
@@ -141,6 +147,7 @@ const HeroSection = () => {
         mobileSrc="/videos/hero-video-mobile.mp4"
         poster="/images/hero-poster.webp"
         mobilePoster="/images/hero-poster-mobile-cropped.webp"
+        captions="/captions/hero-video-en.vtt"
       />
 
       {/* Gradient Overlay */}

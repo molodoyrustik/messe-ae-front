@@ -9,6 +9,7 @@ interface SafeVideoPlayerProps {
   mobileSrc?: string;
   poster?: string;
   mobilePoster?: string;
+  captions?: string;
 }
 
 export const SafeVideoPlayer = ({
@@ -16,6 +17,7 @@ export const SafeVideoPlayer = ({
   mobileSrc,
   poster,
   mobilePoster,
+  captions,
 }: SafeVideoPlayerProps) => {
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
@@ -113,6 +115,15 @@ export const SafeVideoPlayer = ({
           }}
         >
           <source src={currentSrc} type="video/mp4" />
+          {captions && (
+            <track
+              kind="captions"
+              src={captions}
+              srcLang="en"
+              label="English"
+              default
+            />
+          )}
           Your browser does not support the video tag.
         </video>
       )}

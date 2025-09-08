@@ -1,13 +1,12 @@
 export const ResourceHints = () => {
   return (
     <>
-      {/* Hero poster preloading - Next.js Image handles desktop, manual preload for mobile */}
+      {/* Hero poster preloading - Both images for better mobile performance */}
       <link
         rel="preload"
         as="image"
         fetchPriority="high"
         href="/images/hero-poster-mobile-cropped.webp"
-        media="(max-width: 899px)"
       />
 
       {/* Preconnect to Strapi API for faster API calls */}

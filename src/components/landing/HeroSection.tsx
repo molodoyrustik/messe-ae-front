@@ -14,9 +14,7 @@ import Head from "next/head";
 import { ClientOnly } from "@/components/ClientOnly";
 import { SafeVideoPlayer } from "@/components/SafeVideoPlayer";
 
-const ContactFormModal = dynamic(() => import("@/components/ContactFormModal").then(mod => ({ default: mod.ContactFormModal })), {
-  ssr: false,
-});
+const ContactFormModal = dynamic(() => import("@/components/ContactFormModal").then(mod => ({ default: mod.ContactFormModal })));
 
 const HeroSection = () => {
   const [showFloatingButton, setShowFloatingButton] = useState(false);

@@ -28,9 +28,7 @@ import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useMobileMenu } from "@/contexts/MobileMenuContext";
 
-const ContactFormModal = dynamic(() => import("@/components/ContactFormModal").then(mod => ({ default: mod.ContactFormModal })), {
-  ssr: false,
-});
+const ContactFormModal = dynamic(() => import("@/components/ContactFormModal").then(mod => ({ default: mod.ContactFormModal })));
 
 // Custom Menu Item component with proper states
 const CustomMenuItem = ({

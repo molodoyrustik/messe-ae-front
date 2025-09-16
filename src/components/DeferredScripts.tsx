@@ -3,14 +3,9 @@
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 
-// Определяем режим Google Analytics на уровне модуля (SSR-safe)
-const GA_MODE = (process.env.NEXT_PUBLIC_GA_MODE || 'partytown') as 'partytown' | 'native';
-
-// Динамически импортируем нужный компонент Google Analytics
+// Динамически импортируем Google Analytics только после взаимодействия
 const GoogleAnalytics = dynamic(
-  () => GA_MODE === 'native' 
-    ? import('./GoogleAnalyticsNative').then(mod => ({ default: mod.default }))
-    : import('./GoogleAnalyticsPartytown').then(mod => ({ default: mod.default })),
+  () => import('./GoogleAnalyticsNative').then(mod => ({ default: mod.default })),
   { ssr: false }
 );
 
@@ -18,9 +13,9 @@ export const DeferredScripts = () => {
   const [shouldLoadScripts, setShouldLoadScripts] = useState(false);
 
   useEffect(() => {
-    // В development режиме показываем текущий режим GA
+    // В development режиме показываем что используется динамическая загрузка
     if (process.env.NODE_ENV === 'development') {
-      console.log(`🔧 GA Mode: ${GA_MODE}`);
+      console.log('🔧 GA Mode: Dynamic loading (no Partytown)');
     }
 
     // Load scripts after user interaction (scroll, click, keydown) or after 3 seconds

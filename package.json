@@ -4,11 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "npm run partytown && next build --turbopack",
+    "build": "next build --turbopack",
     "start": "next start",
     "lint": "next lint",
-    "test": "vitest",
-    "partytown": "partytown copylib public/~partytown --no-debug"
+    "test": "vitest"
   },
   "dependencies": {
     "@emotion/cache": "^11.14.0",
@@ -16,7 +15,6 @@
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^7.1.2",
     "@mui/material": "^7.1.1",
-    "@qwik.dev/partytown": "^0.11.2",
     "@tanstack/react-query": "^5.81.5",
     "@tanstack/react-query-devtools": "^5.81.5",
     "framer-motion": "^12.19.1",

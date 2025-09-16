@@ -23,7 +23,13 @@ declare global {
   }
 }
 
-export const ContractForm = ({ type }: { type: "modal" | "footer" }) => {
+export const ContractForm = ({ 
+  type,
+  onFormLoad 
+}: { 
+  type: "modal" | "footer";
+  onFormLoad?: () => void;
+}) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scriptReady, setScriptReady] = useState(false);
 
@@ -38,7 +44,12 @@ export const ContractForm = ({ type }: { type: "modal" | "footer" }) => {
       region,
       target: `#hubspot-form-${type}`,
     });
-  }, [scriptReady, type]);
+    
+    // Call onFormLoad callback if provided
+    if (onFormLoad) {
+      onFormLoad();
+    }
+  }, [scriptReady, type, onFormLoad]);
 
   return (
     <>

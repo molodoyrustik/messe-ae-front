@@ -13,11 +13,6 @@ export const DeferredScripts = () => {
   const [shouldLoadScripts, setShouldLoadScripts] = useState(false);
 
   useEffect(() => {
-    // В development режиме показываем что используется динамическая загрузка
-    if (process.env.NODE_ENV === 'development') {
-      console.log('🔧 GA Mode: Dynamic loading (no Partytown)');
-    }
-
     // Load scripts after user interaction (scroll, click, keydown) or after 3 seconds
     const loadScripts = () => {
       setShouldLoadScripts(true);

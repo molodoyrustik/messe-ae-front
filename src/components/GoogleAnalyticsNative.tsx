@@ -42,7 +42,7 @@ export default function GoogleAnalyticsNative({ trackingId }: GoogleAnalyticsNat
 
   return (
     <>
-      {/* Обычная загрузка Google Analytics без Partytown */}
+      {/* Google Analytics Script */}
       <Script
         src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
         strategy="afterInteractive"
@@ -69,7 +69,7 @@ export default function GoogleAnalyticsNative({ trackingId }: GoogleAnalyticsNat
   );
 }
 
-// Вспомогательные функции для отслеживания событий (совместимые с Partytown версией)
+// Вспомогательные функции для отслеживания событий
 export const trackEvent = (
   eventName: string,
   parameters?: Record<string, unknown>

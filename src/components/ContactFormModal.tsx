@@ -13,7 +13,7 @@ import {
   Stack,
   CircularProgress,
 } from "@mui/material";
-import { ContractFormPartytown } from "./ContractFormPartytown";
+import { ContractForm } from "./ContractForm";
 import CloseIcon from "@mui/icons-material/Close";
 import { useState, useEffect } from "react";
 
@@ -133,7 +133,7 @@ export const ContactFormModal = ({ open, onClose }: ContactFormModalProps) => {
             }}
           >
             {shouldLoadForm ? (
-              <ContractFormPartytown 
+              <ContractForm 
                 type="modal" 
               />
             ) : (
@@ -172,7 +172,7 @@ export const ContactFormModal = ({ open, onClose }: ContactFormModalProps) => {
           <CloseIcon />
         </IconButton>
         {shouldLoadForm ? (
-          <ContractFormPartytown 
+          <ContractForm 
             type="modal" 
           />
         ) : (

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Box, Typography, Skeleton, Stack } from "@mui/material";
-import { ContractFormPartytown } from "./ContractFormPartytown";
+import { ContractForm } from "./ContractForm";
 
 export const LazyFooterForm = () => {
   const [shouldLoadForm, setShouldLoadForm] = useState(false);
@@ -54,7 +54,7 @@ export const LazyFooterForm = () => {
       }}
     >
       {shouldLoadForm ? (
-        <ContractFormPartytown 
+        <ContractForm 
           type="footer" 
           onFormLoad={() => console.log('Footer form loaded successfully')}
         />

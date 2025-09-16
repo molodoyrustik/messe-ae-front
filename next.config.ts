@@ -8,22 +8,8 @@ const nextConfig: NextConfig = {
   // Enable compression for better performance
   compress: true,
   
-  // Partytown configuration
   async headers() {
     return [
-      {
-        source: '/~partytown/:path*',
-        headers: [
-          {
-            key: 'Cross-Origin-Embedder-Policy',
-            value: 'credentialless',
-          },
-          {
-            key: 'Cross-Origin-Opener-Policy',
-            value: 'same-origin',
-          },
-        ],
-      },
       // Allow cross-origin requests for third-party scripts
       {
         source: '/(.*)',
@@ -130,13 +116,6 @@ const nextConfig: NextConfig = {
               chunks: 'all',
               name: 'mui-core',
               priority: 30,
-            },
-            // Partytown (heavy web worker library)
-            partytown: {
-              test: /[\\/]node_modules[\\/]@qwik\.dev[\\/]partytown[\\/]/,
-              chunks: 'all', 
-              name: 'partytown',
-              priority: 25,
             },
             // React libraries
             react: {

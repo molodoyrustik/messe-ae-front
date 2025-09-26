@@ -81,6 +81,23 @@ export default function ProjectImageGallery({
   );
   const [modalError, setModalError] = useState<Record<number, boolean>>({});
 
+  const handleOpen = useCallback((index: number) => setActiveIndex(index), []);
+  const handleClose = useCallback(() => setActiveIndex(null), []);
+
+  const showPrev = useCallback(() => {
+    setActiveIndex((prev) => {
+      if (prev === null) return prev;
+      return prev === 0 ? normalizedImages.length - 1 : prev - 1;
+    });
+  }, [normalizedImages.length]);
+
+  const showNext = useCallback(() => {
+    setActiveIndex((prev) => {
+      if (prev === null) return prev;
+      return prev === normalizedImages.length - 1 ? 0 : prev + 1;
+    });
+  }, [normalizedImages.length]);
+
   useEffect(() => {
     setModalImageLoaded(false);
   }, [activeIndex]);
@@ -145,23 +162,6 @@ export default function ProjectImageGallery({
       }));
     }
   };
-
-  const handleOpen = useCallback((index: number) => setActiveIndex(index), []);
-  const handleClose = useCallback(() => setActiveIndex(null), []);
-
-  const showPrev = useCallback(() => {
-    setActiveIndex((prev) => {
-      if (prev === null) return prev;
-      return prev === 0 ? normalizedImages.length - 1 : prev - 1;
-    });
-  }, [normalizedImages.length]);
-
-  const showNext = useCallback(() => {
-    setActiveIndex((prev) => {
-      if (prev === null) return prev;
-      return prev === normalizedImages.length - 1 ? 0 : prev + 1;
-    });
-  }, [normalizedImages.length]);
 
   const activeImage =
     activeIndex !== null ? normalizedImages[activeIndex] : null;

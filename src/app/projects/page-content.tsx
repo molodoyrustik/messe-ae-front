@@ -187,7 +187,7 @@ export default function ProjectsPageContent({
     refetchOnWindowFocus: false,
   });
 
-  const showProjectsSkeleton = projectsLoading && (!projectsData || projectsData.data.length === 0);
+  const showProjectsSkeleton = projectsLoading && (!projectsData || (projectsData as ProjectsResponse)?.data?.length === 0);
 
   // Sync filters with URL params when they're set initially
   useEffect(() => {

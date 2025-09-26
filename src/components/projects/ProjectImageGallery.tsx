@@ -77,6 +77,26 @@ export default function ProjectImageGallery({ images, projectTitle }: ProjectIma
     setModalImageLoaded(false);
   }, [activeIndex]);
 
+  useEffect(() => {
+    if (activeIndex === null) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        showPrev();
+      } else if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        showNext();
+      } else if (event.key === 'Escape') {
+        event.preventDefault();
+        handleClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [activeIndex]);
+
   const modalContainerWidth = isMobile ? '100vw' : '90vw';
   const modalImageSizes = isMobile ? '(max-width: 600px) 100vw, 70vw' : '(max-width: 1024px) 80vw, 90vw';
 
@@ -154,7 +174,22 @@ export default function ProjectImageGallery({ images, projectTitle }: ProjectIma
         {normalizedImages.map((image, index) => (
           <Box
             key={`${image.url}-${index}`}
-            sx={{ position: 'relative', borderRadius: '0.5rem', overflow: 'hidden', cursor: 'zoom-in' }}
+            sx={{
+              position: 'relative',
+              borderRadius: '0.5rem',
+              overflow: 'hidden',
+              cursor: 'zoom-in',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+              transition: 'all 0.3s ease',
+              outline: 'none',
+              '&:hover': {
+                transform: 'translateY(-4px) scale(1.02)',
+                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)',
+              },
+              '&:focus': {
+                outline: 'none',
+              }
+            }}
             onClick={() => handleOpen(index)}
             role="button"
             tabIndex={0}
@@ -327,9 +362,14 @@ export default function ProjectImageGallery({ images, projectTitle }: ProjectIma
                 <Image
                   src={activeImage.url}
                   alt={activeImage.alt}
-                  fill
+                  width={1200}
+                  height={900}
                   sizes={modalImageSizes}
-                  style={{ objectFit: 'contain' }}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'contain'
+                  }}
                   onLoad={handleModalLoad}
                   onError={handleModalError}
                   priority

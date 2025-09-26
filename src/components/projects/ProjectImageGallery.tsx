@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useEffect, useMemo, useState } from 'react';
-import type { SyntheticEvent } from 'react';
-import Image from 'next/image';
+import { useCallback, useEffect, useMemo, useState } from "react";
+import type { SyntheticEvent } from "react";
+import Image from "next/image";
 import {
   Box,
   Dialog,
@@ -10,12 +10,12 @@ import {
   Skeleton,
   useMediaQuery,
   useTheme,
-} from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { ProjectImage } from '@/types/api';
-import { STRAPI_BASE_URL } from '@/lib/api/config';
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import { ProjectImage } from "@/types/api";
+import { STRAPI_BASE_URL } from "@/lib/api/config";
 
 interface ProjectImageGalleryProps {
   images: ProjectImage[];
@@ -30,9 +30,12 @@ interface NormalizedImage {
   optimized: boolean;
 }
 
-export default function ProjectImageGallery({ images, projectTitle }: ProjectImageGalleryProps) {
+export default function ProjectImageGallery({
+  images,
+  projectTitle,
+}: ProjectImageGalleryProps) {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const normalizedImages = useMemo<NormalizedImage[]>(
     () =>
@@ -50,27 +53,32 @@ export default function ProjectImageGallery({ images, projectTitle }: ProjectIma
           const sourceHeight = preferredFormat?.height || image.height || 900;
           const shouldOptimize = Boolean(preferredFormat);
 
-          const absoluteUrl = sourceUrl.startsWith('http')
+          const absoluteUrl = sourceUrl.startsWith("http")
             ? sourceUrl
             : STRAPI_BASE_URL
-            ? `${STRAPI_BASE_URL}${sourceUrl}`
-            : sourceUrl;
+              ? `${STRAPI_BASE_URL}${sourceUrl}`
+              : sourceUrl;
 
           return {
             url: absoluteUrl,
-            alt: image.alternativeText || `${projectTitle} - Image ${index + 1}`,
+            alt:
+              image.alternativeText || `${projectTitle} - Image ${index + 1}`,
             width: sourceWidth,
             height: sourceHeight,
             optimized: shouldOptimize,
           };
         }),
-    [images, projectTitle]
+    [images, projectTitle],
   );
 
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  const [thumbnailLoaded, setThumbnailLoaded] = useState<Record<number, boolean>>({});
+  const [thumbnailLoaded, setThumbnailLoaded] = useState<
+    Record<number, boolean>
+  >({});
   const [modalImageLoaded, setModalImageLoaded] = useState(false);
-  const [thumbnailError, setThumbnailError] = useState<Record<number, boolean>>({});
+  const [thumbnailError, setThumbnailError] = useState<Record<number, boolean>>(
+    {},
+  );
   const [modalError, setModalError] = useState<Record<number, boolean>>({});
 
   useEffect(() => {
@@ -81,34 +89,35 @@ export default function ProjectImageGallery({ images, projectTitle }: ProjectIma
     if (activeIndex === null) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'ArrowLeft') {
+      if (event.key === "ArrowLeft") {
         event.preventDefault();
         showPrev();
-      } else if (event.key === 'ArrowRight') {
+      } else if (event.key === "ArrowRight") {
         event.preventDefault();
         showNext();
-      } else if (event.key === 'Escape') {
+      } else if (event.key === "Escape") {
         event.preventDefault();
         handleClose();
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [activeIndex]);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [activeIndex, showPrev, showNext, handleClose]);
 
-  const modalContainerWidth = isMobile ? '100vw' : '90vw';
-  const modalImageSizes = isMobile ? '(max-width: 600px) 100vw, 70vw' : '(max-width: 1024px) 80vw, 90vw';
+  const modalImageSizes = isMobile
+    ? "(max-width: 600px) 100vw, 70vw"
+    : "(max-width: 1024px) 80vw, 90vw";
 
-
-  const handleThumbnailLoad = (index: number) => (event: SyntheticEvent<HTMLImageElement>) => {
-    if ((event.currentTarget as HTMLImageElement)?.complete) {
-      setThumbnailLoaded((prev) => ({
-        ...prev,
-        [index]: true,
-      }));
-    }
-  };
+  const handleThumbnailLoad =
+    (index: number) => (event: SyntheticEvent<HTMLImageElement>) => {
+      if ((event.currentTarget as HTMLImageElement)?.complete) {
+        setThumbnailLoaded((prev) => ({
+          ...prev,
+          [index]: true,
+        }));
+      }
+    };
 
   const handleThumbnailError = (index: number) => () => {
     setThumbnailLoaded((prev) => ({
@@ -137,64 +146,66 @@ export default function ProjectImageGallery({ images, projectTitle }: ProjectIma
     }
   };
 
-  const handleOpen = (index: number) => setActiveIndex(index);
-  const handleClose = () => setActiveIndex(null);
+  const handleOpen = useCallback((index: number) => setActiveIndex(index), []);
+  const handleClose = useCallback(() => setActiveIndex(null), []);
 
-  const showPrev = () => {
+  const showPrev = useCallback(() => {
     setActiveIndex((prev) => {
       if (prev === null) return prev;
       return prev === 0 ? normalizedImages.length - 1 : prev - 1;
     });
-  };
+  }, [normalizedImages.length]);
 
-  const showNext = () => {
+  const showNext = useCallback(() => {
     setActiveIndex((prev) => {
       if (prev === null) return prev;
       return prev === normalizedImages.length - 1 ? 0 : prev + 1;
     });
-  };
+  }, [normalizedImages.length]);
 
-  const activeImage = activeIndex !== null ? normalizedImages[activeIndex] : null;
-  const activeImageErrored = activeIndex !== null ? Boolean(modalError[activeIndex]) : false;
+  const activeImage =
+    activeIndex !== null ? normalizedImages[activeIndex] : null;
+  const activeImageErrored =
+    activeIndex !== null ? Boolean(modalError[activeIndex]) : false;
 
   return (
     <>
       <Box
         sx={{
-          display: 'grid',
+          display: "grid",
           gridTemplateColumns: {
-            xs: '1fr',
-            sm: 'repeat(2, 1fr)',
-            md: 'repeat(3, 1fr)',
+            xs: "1fr",
+            sm: "repeat(2, 1fr)",
+            md: "repeat(3, 1fr)",
           },
           gap: { xs: 1, sm: 1.5, md: 2 },
-          width: '100%',
+          width: "100%",
         }}
       >
         {normalizedImages.map((image, index) => (
           <Box
             key={`${image.url}-${index}`}
             sx={{
-              position: 'relative',
-              borderRadius: '0.5rem',
-              overflow: 'hidden',
-              cursor: 'zoom-in',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-              transition: 'all 0.3s ease',
-              outline: 'none',
-              '&:hover': {
-                transform: 'translateY(-4px) scale(1.02)',
-                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)',
+              position: "relative",
+              borderRadius: "0.5rem",
+              overflow: "hidden",
+              cursor: "zoom-in",
+              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+              transition: "all 0.3s ease",
+              outline: "none",
+              "&:hover": {
+                transform: "translateY(-4px) scale(1.02)",
+                boxShadow: "0 8px 24px rgba(0, 0, 0, 0.15)",
               },
-              '&:focus': {
-                outline: 'none',
-              }
+              "&:focus": {
+                outline: "none",
+              },
             }}
             onClick={() => handleOpen(index)}
             role="button"
             tabIndex={0}
             onKeyDown={(event) => {
-              if (event.key === 'Enter' || event.key === ' ') {
+              if (event.key === "Enter" || event.key === " ") {
                 event.preventDefault();
                 handleOpen(index);
               }
@@ -204,7 +215,14 @@ export default function ProjectImageGallery({ images, projectTitle }: ProjectIma
               <Skeleton
                 variant="rectangular"
                 animation="wave"
-                sx={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 1 }}
+                sx={{
+                  position: "absolute",
+                  inset: 0,
+                  width: "100%",
+                  height: "100%",
+                  pointerEvents: "none",
+                  zIndex: 1,
+                }}
               />
             )}
             {thumbnailError[index] ? (
@@ -214,17 +232,17 @@ export default function ProjectImageGallery({ images, projectTitle }: ProjectIma
                 alt={image.alt}
                 loading="lazy"
                 style={{
-                  width: '100%',
-                  height: 'auto',
-                  display: 'block',
-                  objectFit: 'cover',
+                  width: "100%",
+                  height: "auto",
+                  display: "block",
+                  objectFit: "cover",
                 }}
               />
             ) : (
               <Box
                 sx={{
-                  position: 'relative',
-                  width: '100%',
+                  position: "relative",
+                  width: "100%",
                   height: 0,
                   paddingBottom: `${(image.height / image.width) * 100}%`,
                 }}
@@ -235,8 +253,8 @@ export default function ProjectImageGallery({ images, projectTitle }: ProjectIma
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   style={{
-                    objectFit: 'cover',
-                    transition: 'transform 0.3s ease',
+                    objectFit: "cover",
+                    transition: "transform 0.3s ease",
                   }}
                   onLoad={handleThumbnailLoad(index)}
                   onError={handleThumbnailError(index)}
@@ -256,34 +274,34 @@ export default function ProjectImageGallery({ images, projectTitle }: ProjectIma
         maxWidth="xl"
         PaperProps={{
           sx: {
-            backgroundColor: 'rgba(0, 0, 0, 0.95)',
-            boxShadow: 'none',
-            borderRadius: isMobile ? 0 : '0.75rem',
+            backgroundColor: "rgba(0, 0, 0, 0.95)",
+            boxShadow: "none",
+            borderRadius: isMobile ? 0 : "0.75rem",
           },
         }}
-        BackdropProps={{ sx: { backgroundColor: 'rgba(0, 0, 0, 0.85)' } }}
+        BackdropProps={{ sx: { backgroundColor: "rgba(0, 0, 0, 0.85)" } }}
       >
         {activeImage && (
           <Box
             sx={{
-              position: 'relative',
-              width: '100%',
-              minHeight: isMobile ? '100vh' : '70vh',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              position: "relative",
+              width: "100%",
+              minHeight: isMobile ? "100vh" : "70vh",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
             <IconButton
               onClick={handleClose}
               sx={{
-                position: 'absolute',
+                position: "absolute",
                 top: { xs: 16, md: 24 },
                 right: { xs: 16, md: 24 },
-                color: '#FFFFFF',
+                color: "#FFFFFF",
                 zIndex: 2,
-                backgroundColor: 'rgba(0,0,0,0.4)',
-                '&:hover': { backgroundColor: 'rgba(0,0,0,0.6)' },
+                backgroundColor: "rgba(0,0,0,0.4)",
+                "&:hover": { backgroundColor: "rgba(0,0,0,0.6)" },
               }}
               aria-label="Close gallery"
             >
@@ -295,12 +313,12 @@ export default function ProjectImageGallery({ images, projectTitle }: ProjectIma
                 <IconButton
                   onClick={showPrev}
                   sx={{
-                    position: 'absolute',
+                    position: "absolute",
                     left: { xs: 16, md: 24 },
-                    color: '#FFFFFF',
+                    color: "#FFFFFF",
                     zIndex: 2,
-                    backgroundColor: 'rgba(0,0,0,0.4)',
-                    '&:hover': { backgroundColor: 'rgba(0,0,0,0.6)' },
+                    backgroundColor: "rgba(0,0,0,0.4)",
+                    "&:hover": { backgroundColor: "rgba(0,0,0,0.6)" },
                   }}
                   aria-label="Previous image"
                 >
@@ -309,12 +327,12 @@ export default function ProjectImageGallery({ images, projectTitle }: ProjectIma
                 <IconButton
                   onClick={showNext}
                   sx={{
-                    position: 'absolute',
+                    position: "absolute",
                     right: { xs: 16, md: 24 },
-                    color: '#FFFFFF',
+                    color: "#FFFFFF",
                     zIndex: 2,
-                    backgroundColor: 'rgba(0,0,0,0.4)',
-                    '&:hover': { backgroundColor: 'rgba(0,0,0,0.6)' },
+                    backgroundColor: "rgba(0,0,0,0.4)",
+                    "&:hover": { backgroundColor: "rgba(0,0,0,0.6)" },
                   }}
                   aria-label="Next image"
                 >
@@ -328,23 +346,23 @@ export default function ProjectImageGallery({ images, projectTitle }: ProjectIma
                 variant="rectangular"
                 animation="wave"
                 sx={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  width: isMobile ? '100vw' : '90vw',
-                  height: isMobile ? 'calc(100vh - 120px)' : '90vh',
-                  borderRadius: '0.75rem',
-                  pointerEvents: 'none'
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  width: isMobile ? "100vw" : "90vw",
+                  height: isMobile ? "calc(100vh - 120px)" : "90vh",
+                  borderRadius: "0.75rem",
+                  pointerEvents: "none",
                 }}
               />
             )}
 
             <Box
               sx={{
-                position: 'relative',
-                width: isMobile ? '100vw' : '90vw',
-                height: isMobile ? 'calc(100vh - 120px)' : '90vh',
+                position: "relative",
+                width: isMobile ? "100vw" : "90vw",
+                height: isMobile ? "calc(100vh - 120px)" : "90vh",
               }}
             >
               {activeImageErrored ? (
@@ -353,9 +371,9 @@ export default function ProjectImageGallery({ images, projectTitle }: ProjectIma
                   src={activeImage.url}
                   alt={activeImage.alt}
                   style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'contain',
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "contain",
                   }}
                 />
               ) : (
@@ -366,9 +384,9 @@ export default function ProjectImageGallery({ images, projectTitle }: ProjectIma
                   height={900}
                   sizes={modalImageSizes}
                   style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'contain'
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "contain",
                   }}
                   onLoad={handleModalLoad}
                   onError={handleModalError}

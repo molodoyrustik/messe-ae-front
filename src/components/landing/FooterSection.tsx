@@ -18,7 +18,7 @@ import {
   LocationOn,
 } from "@mui/icons-material";
 import Image from "next/image";
-import { ContractForm } from "../ContractForm";
+import { ContactFormNew } from "../ContactFormNew";
 
 // Custom SVG Icons for mobile footer
 const InstagramSolid = () => (
@@ -538,7 +538,7 @@ const FooterSection = () => {
             </Typography>
 
             {/* Contact Form */}
-            <ContractForm type="footer" />
+            <ContactFormNew />
           </Box>
         </Box>
       </Container>

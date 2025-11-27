@@ -5,7 +5,6 @@ import {
   Typography,
 } from '@mui/material';
 import Link from 'next/link';
-import Image from 'next/image';
 import Header from '@/components/Header';
 import FooterSection from '@/components/landing/FooterSection';
 import { projectsApi } from '@/lib/api/projects';
@@ -14,6 +13,7 @@ import { STRAPI_BASE_URL } from '@/lib/api/config';
 import { ProjectResponse } from '@/types/api';
 import { formatProjectSizeDisplay, formatTotalSizeForUrl, hasDisplaySize } from '@/utils/projectSizes';
 import { createMetadata } from '@/lib/seo';
+import ProjectImageGallery from '@/components/projects/ProjectImageGallery';
 
 // ISR - revalidate every 300 seconds (5 minutes)
 export const revalidate = 300;
@@ -441,42 +441,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               </Box>
 
               {/* All project images */}
-              <Box 
-                sx={{ 
-                  display: 'grid',
-                  gridTemplateColumns: { 
-                    xs: '1fr', 
-                    sm: 'repeat(2, 1fr)',
-                    md: 'repeat(3, 1fr)' 
-                  },
-                  gap: { xs: 1, sm: 1.5, md: 2 },
-                  width: '100%',
-                }}
-              >
-                {project.images.map((image, index) => (
-                  <Box key={image.id || index} sx={{ position: 'relative' }}>
-                    <Image
-                      src={
-                        image.url && !image.url.startsWith('http')
-                          ? `${STRAPI_BASE_URL}${image.url}`
-                          : image.url
-                      }
-                      alt={image.alternativeText || `${project.title} - Image ${index + 1}`}
-                      width={400}
-                      height={316}
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      quality={85}
-                      style={{
-                        width: '100%',
-                        height: 'auto',
-                        borderRadius: '0.5rem',
-                        objectFit: 'cover',
-                      }}
-                      priority={index === 0}
-                    />
-                  </Box>
-                ))}
-              </Box>
+              <ProjectImageGallery
+                images={project.images}
+                projectTitle={project.title || project.client?.name || 'Project image'}
+              />
             </Box>
           )}
       </Container>

@@ -1,7 +1,10 @@
 'use client';
 
-import { Box, Typography } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { Box, Skeleton, Typography } from '@mui/material';
 import Link from 'next/link';
+import Image from 'next/image';
+import type { SyntheticEvent } from 'react';
 import { Project } from '@/types/api';
 import { STRAPI_BASE_URL } from '@/lib/api/config';
 import { formatProjectSizeDisplay, formatTotalSizeForUrl, hasDisplaySize } from '@/utils/projectSizes';
@@ -11,13 +14,40 @@ interface ProjectCardProps {
 }
 
 export default function ProjectCard({ project }: ProjectCardProps) {
-  const baseImageUrl = project.images?.[0]?.formats?.medium?.url || 
-                       project.images?.[0]?.url;
-  
-  // Strapi sometimes returns relative URLs, so we need to prepend the base URL
-  const imageUrl = baseImageUrl && !baseImageUrl.startsWith('http') 
-    ? `${STRAPI_BASE_URL}${baseImageUrl}`
-    : baseImageUrl;
+  const baseImage = project.images?.[0];
+
+  const preferredFormat =
+    baseImage?.formats?.medium ||
+    baseImage?.formats?.small ||
+    baseImage?.formats?.thumbnail ||
+    baseImage?.formats?.large;
+
+  const rawImageUrl = preferredFormat?.url || baseImage?.url;
+
+  const imageUrl = rawImageUrl && !rawImageUrl.startsWith('http')
+    ? `${STRAPI_BASE_URL}${rawImageUrl}`
+    : rawImageUrl;
+
+  const shouldOptimize = Boolean(preferredFormat);
+
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const [hasImageError, setHasImageError] = useState(false);
+
+  useEffect(() => {
+    setIsImageLoaded(false);
+    setHasImageError(false);
+  }, [imageUrl]);
+
+  const handleImageLoad = (event: SyntheticEvent<HTMLImageElement>) => {
+    if ((event.currentTarget as HTMLImageElement)?.complete) {
+      setIsImageLoaded(true);
+    }
+  };
+
+  const handleImageError = () => {
+    setIsImageLoaded(true);
+    setHasImageError(true);
+  };
 
   // Create SEO-friendly URL slug
   const createProjectUrl = () => {
@@ -49,17 +79,49 @@ export default function ProjectCard({ project }: ProjectCardProps) {
     >
       {imageUrl ? (
         <Box
-          component="img"
-          src={imageUrl}
-          alt={project.client?.name || project.title}
           sx={{
+            position: 'relative',
             width: '100%',
             height: { xs: 240, md: 328 },
-            objectFit: 'cover',
             borderRadius: '4px',
-            transition: 'transform 0.3s ease',
+            overflow: 'hidden',
           }}
-        />
+        >
+          {!isImageLoaded && (
+            <Skeleton
+              variant="rectangular"
+              animation="wave"
+              sx={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
+            />
+          )}
+          {hasImageError ? (
+            <Box
+              component="img"
+              src={imageUrl}
+              alt={project.client?.name || project.title}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+              }}
+            />
+          ) : (
+            <Image
+              src={imageUrl}
+              alt={project.client?.name || project.title}
+              fill
+              sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              style={{
+                objectFit: 'cover',
+                borderRadius: '4px',
+                transition: 'transform 0.3s ease',
+              }}
+              onLoad={handleImageLoad}
+              onError={handleImageError}
+              unoptimized={!shouldOptimize}
+            />
+          )}
+        </Box>
       ) : (
         <Box
           sx={{

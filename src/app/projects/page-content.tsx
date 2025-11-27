@@ -7,12 +7,13 @@ import {
   Container,
   Typography,
   Chip,
-  CircularProgress,
   Alert,
   useMediaQuery,
   useTheme,
   IconButton,
-  Button
+  Button,
+  Skeleton,
+  LinearProgress,
 } from '@mui/material';
 import Header from '@/components/Header';
 import FooterSection from '@/components/landing/FooterSection';
@@ -22,7 +23,7 @@ import CombinedFilterPanel from '@/components/projects/CombinedFilterPanel';
 import FilterIcon from '@/components/icons/FilterIcon';
 import { useProjects } from '@/hooks/use-projects';
 import { useClientsWithProjectCounts } from '@/hooks/use-clients';
-import { ProjectsFilters } from '@/types/api';
+import { ProjectsFilters, ProjectsResponse, ClientsResponse } from '@/types/api';
 
 const sizeRanges = [
   { label: '< 50 m²', value: { min: 0, max: 49 } },
@@ -31,7 +32,37 @@ const sizeRanges = [
   { label: '> 300 m²', value: { min: 301, max: 999999 } },
 ];
 
-export default function ProjectsPageContent() {
+interface ProjectsPageContentProps {
+  initialProjects?: ProjectsResponse;
+  initialClients?: ClientsResponse;
+}
+
+const skeletonCardHeight = { xs: 240, md: 328 } as const;
+
+function ProjectCardSkeleton() {
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+      <Skeleton
+        variant="rectangular"
+        animation="wave"
+        sx={{ width: '100%', height: skeletonCardHeight, borderRadius: '4px' }}
+      />
+      <Box sx={{ display: 'flex', gap: 2.5, flexDirection: 'row' }}>
+        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
+          <Skeleton variant="text" width="60%" />
+          <Skeleton variant="text" width="80%" />
+          <Skeleton variant="text" width="70%" />
+        </Box>
+        <Skeleton variant="text" width={80} />
+      </Box>
+    </Box>
+  );
+}
+
+export default function ProjectsPageContent({
+  initialProjects,
+  initialClients,
+}: ProjectsPageContentProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const searchParams = useSearchParams();
@@ -57,16 +88,36 @@ export default function ProjectsPageContent() {
     page: 1,
     pageSize: 12,
   });
-  
+
   const [selectedClients, setSelectedClients] = useState<string[]>(initialParams.clients);
   const [selectedSizeRanges, setSelectedSizeRanges] = useState<string[]>(initialParams.sizes);
   const [selectedTypes, setSelectedTypes] = useState<string[]>(initialParams.types);
   const [currentPage, setCurrentPage] = useState(initialParams.page);
-  
+
   const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
   const [showLeftGradient, setShowLeftGradient] = useState(false);
   const [showRightGradient, setShowRightGradient] = useState(true);
   const clientScrollRef = useRef<HTMLDivElement>(null);
+
+  const hasUrlFilters =
+    initialParams.clients.length > 0 ||
+    initialParams.sizes.length > 0 ||
+    initialParams.types.length > 0 ||
+    initialParams.page > 1;
+
+  const shouldUseInitialProjects = Boolean(
+    initialProjects &&
+    !hasUrlFilters &&
+    (filters.page ?? 1) === 1 &&
+    (filters.pageSize ?? 12) === 12 &&
+    !filters.clientSlug &&
+    !(filters.clientSlugs && filters.clientSlugs.length) &&
+    !(filters.sizeRanges && filters.sizeRanges.length) &&
+    !filters.constructionType &&
+    !(filters.constructionTypes && filters.constructionTypes.length) &&
+    filters.minSize === undefined &&
+    filters.maxSize === undefined
+  );
 
   // Update URL when filters change
   const updateURL = useCallback((params: {
@@ -117,9 +168,27 @@ export default function ProjectsPageContent() {
     router.push(newURL, { scroll: false });
   }, [searchParams, pathname, router]);
 
-  const { data: projectsData, isLoading: projectsLoading, error: projectsError } = useProjects(filters);
-  const { data: clientsData, isLoading: clientsLoading } = useClientsWithProjectCounts();
-  
+  const {
+    data: projectsData,
+    isLoading: projectsLoading,
+    isFetching: projectsFetching,
+    error: projectsError,
+  } = useProjects(filters, {
+    initialData: shouldUseInitialProjects ? initialProjects : undefined,
+    placeholderData: shouldUseInitialProjects ? initialProjects : undefined,
+  });
+
+  const { data: clientsData, isLoading: clientsLoading } = useClientsWithProjectCounts({
+    initialData: initialClients,
+    placeholderData: initialClients,
+    staleTime: 1000 * 60 * 60 * 24,
+    gcTime: 1000 * 60 * 60 * 48,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+  });
+
+  const showProjectsSkeleton = projectsLoading && (!projectsData || (projectsData as ProjectsResponse)?.data?.length === 0);
+
   // Sync filters with URL params when they're set initially
   useEffect(() => {
     const newFilters: ProjectsFilters = {
@@ -771,12 +840,31 @@ export default function ProjectsPageContent() {
         )}
         
         {/* Loading State */}
-        {projectsLoading && (
-          <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
-            <CircularProgress />
+        {showProjectsSkeleton && (
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: {
+                xs: '1fr',
+                sm: 'repeat(2, 1fr)',
+                md: 'repeat(3, 1fr)',
+              },
+              gap: { xs: 2, md: 3 },
+              mb: 4,
+            }}
+          >
+            {Array.from({ length: 6 }).map((_, index) => (
+              <ProjectCardSkeleton key={index} />
+            ))}
           </Box>
         )}
-        
+
+        {projectsFetching && !projectsLoading && filteredProjects.length > 0 && (
+          <Box sx={{ mb: 2 }}>
+            <LinearProgress sx={{ height: 2, borderRadius: 1 }} />
+          </Box>
+        )}
+
         {/* Projects Grid */}
         {!projectsLoading && filteredProjects.length > 0 && (
           <ErrorBoundary>

@@ -31,6 +31,11 @@ const nextConfig: NextConfig = {
         hostname: 'lovely-idea-e9a72cf425.media.strapiapp.com',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'steadfast-beauty-abdbb5f016.media.strapiapp.com',
+        pathname: '/**',
+      },
     ],
   },
   

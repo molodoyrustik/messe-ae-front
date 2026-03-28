@@ -1,9 +1,42 @@
 export const ResourceHints = () => {
   return (
     <>
-      {/* Используем preconnect только если действительно используем CDN */}
-      {/* <link rel="preconnect" href="https://cdn.messe.ae" />
-      <link rel="dns-prefetch" href="https://cdn.messe.ae" /> */}
+      <link
+        rel="preconnect"
+        href="https://lovely-idea-e9a72cf425.strapiapp.com"
+        crossOrigin="anonymous"
+      />
+      <link
+        rel="dns-prefetch"
+        href="https://lovely-idea-e9a72cf425.strapiapp.com"
+      />
+      <link
+        rel="preconnect"
+        href="https://lovely-idea-e9a72cf425.media.strapiapp.com"
+        crossOrigin="anonymous"
+      />
+      <link
+        rel="dns-prefetch"
+        href="https://lovely-idea-e9a72cf425.media.strapiapp.com"
+      />
+      <link
+        rel="preconnect"
+        href="https://steadfast-beauty-abdbb5f016.strapiapp.com"
+        crossOrigin="anonymous"
+      />
+      <link
+        rel="dns-prefetch"
+        href="https://steadfast-beauty-abdbb5f016.strapiapp.com"
+      />
+      <link
+        rel="preconnect"
+        href="https://steadfast-beauty-abdbb5f016.media.strapiapp.com"
+        crossOrigin="anonymous"
+      />
+      <link
+        rel="dns-prefetch"
+        href="https://steadfast-beauty-abdbb5f016.media.strapiapp.com"
+      />
     </>
   );
 };

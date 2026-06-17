@@ -1,14 +1,20 @@
-import type { ReactNode } from 'react';
-import { createMetadata } from '@/lib/seo';
+import JsonLd from "@/components/JsonLd";
+import { getBreadcrumbSchema } from "@/lib/structured-data";
 
-export const metadata = createMetadata({
-  title: 'Careers at Messe.ae | Join Our Exhibition Stand Team',
-  description:
-    'Explore open positions at Messe.ae and join our exhibition stand experts in Dubai. View current roles, responsibilities, and benefits.',
-  path: '/careers',
-  keywords: ['messe.ae careers', 'exhibition jobs dubai', 'join messe.ae team'],
-});
+const careersBreadcrumbSchema = getBreadcrumbSchema([
+  { name: "Home", path: "/" },
+  { name: "Careers", path: "/careers" },
+]);
 
-export default function CareersLayout({ children }: { children: ReactNode }) {
-  return children;
+export default function CareersLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <>
+      <JsonLd data={careersBreadcrumbSchema} />
+      {children}
+    </>
+  );
 }

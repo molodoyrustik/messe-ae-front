@@ -10,10 +10,14 @@ import Header from '@/components/Header';
 import FooterSection from '@/components/landing/FooterSection';
 import { projectsApi } from '@/lib/api/projects';
 import { notFound } from 'next/navigation';
-import { STRAPI_BASE_URL } from '@/lib/api/config';
 import { ProjectResponse } from '@/types/api';
 import { formatProjectSizeDisplay, formatTotalSizeForUrl, hasDisplaySize } from '@/utils/projectSizes';
-import { createMetadata } from '@/lib/seo';
+import { formatProjectImageAlt } from '@/utils/projectImageAlt';
+import { resolveStrapiMediaUrl } from '@/utils/strapiMedia';
+import { NOINDEX_ROBOTS, createMetadata } from '@/lib/seo';
+import JsonLd from '@/components/JsonLd';
+import { getBreadcrumbSchema, getProjectSchema } from '@/lib/structured-data';
+import { buildProjectPath } from '@/lib/project-url';
 
 // ISR - revalidate every 300 seconds (5 minutes)
 export const revalidate = 300;
@@ -65,11 +69,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       `Custom exhibition stand for ${project.client?.name || 'our client'} at ${project.eventName || 'a leading trade show'}.`;
 
     const coverImage = project.images?.[0]?.url
-      ? project.images[0].url.startsWith('http')
-        ? project.images[0].url
-        : STRAPI_BASE_URL
-        ? `${STRAPI_BASE_URL}${project.images[0].url}`
-        : undefined
+      ? resolveStrapiMediaUrl(project.images[0].url) || undefined
       : undefined;
 
     const keywords = [
@@ -89,11 +89,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     });
   } catch (error) {
     console.error('Error fetching project metadata:', error);
-    return createMetadata({
+    return {
       title: 'Project Not Found | Messe.ae',
       description: 'The requested project case study could not be found.',
-      path: `/projects/${slug}`,
-    });
+      robots: NOINDEX_ROBOTS,
+    };
   }
 }
 
@@ -145,9 +145,22 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   }
 
   const project = data.data;
+  const projectPath = buildProjectPath(project);
+  const projectName =
+    project.client?.name || 'Exhibition stand project';
+
+  const structuredData = [
+    getProjectSchema(project),
+    getBreadcrumbSchema([
+      { name: 'Home', path: '/' },
+      { name: 'Projects', path: '/projects' },
+      { name: projectName, path: projectPath },
+    ]),
+  ];
 
   return (
     <Box sx={{ minHeight: '100vh', backgroundColor: '#FFFFFF' }}>
+      <JsonLd data={structuredData} />
       <Header />
       
       <Container maxWidth="xl" sx={{ px: { xs: '1rem', md: '2.5rem' }, pt: { xs: '1.5rem', md: '3.75rem' }, pb: 8 }}>
@@ -456,16 +469,13 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
                 {project.images.map((image, index) => (
                   <Box key={image.id || index} sx={{ position: 'relative' }}>
                     <Image
-                      src={
-                        image.url && !image.url.startsWith('http')
-                          ? `${STRAPI_BASE_URL}${image.url}`
-                          : image.url
-                      }
-                      alt={image.alternativeText || `${project.title} - Image ${index + 1}`}
+                      src={resolveStrapiMediaUrl(image.url)}
+                      alt={formatProjectImageAlt(project, index)}
                       width={400}
                       height={316}
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       quality={85}
+                      unoptimized
                       style={{
                         width: '100%',
                         height: 'auto',

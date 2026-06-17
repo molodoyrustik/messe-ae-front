@@ -1,10 +1,10 @@
-'use client';
-
 import { Box, Typography } from '@mui/material';
 import Link from 'next/link';
 import { Project } from '@/types/api';
-import { STRAPI_BASE_URL } from '@/lib/api/config';
-import { formatProjectSizeDisplay, formatTotalSizeForUrl, hasDisplaySize } from '@/utils/projectSizes';
+import { buildProjectPath } from '@/lib/project-url';
+import { resolveStrapiMediaUrl } from '@/utils/strapiMedia';
+import { formatProjectSizeDisplay, hasDisplaySize } from '@/utils/projectSizes';
+import { formatProjectImageAlt } from '@/utils/projectImageAlt';
 
 interface ProjectCardProps {
   project: Project;
@@ -13,28 +13,12 @@ interface ProjectCardProps {
 export default function ProjectCard({ project }: ProjectCardProps) {
   const baseImageUrl = project.images?.[0]?.formats?.medium?.url || 
                        project.images?.[0]?.url;
-  
-  // Strapi sometimes returns relative URLs, so we need to prepend the base URL
-  const imageUrl = baseImageUrl && !baseImageUrl.startsWith('http') 
-    ? `${STRAPI_BASE_URL}${baseImageUrl}`
-    : baseImageUrl;
-
-  // Create SEO-friendly URL slug
-  const createProjectUrl = () => {
-    const clientSlug = project.client?.name
-      ? project.client.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
-      : 'client';
-    const formattedSize = formatTotalSizeForUrl(project);
-    const size = `${formattedSize}m2`;
-    return `/projects/${clientSlug}-${size}-${project.documentId}`;
-  };
-
-
+  const imageUrl = resolveStrapiMediaUrl(baseImageUrl);
 
   return (
     <Box
       component={Link}
-      href={createProjectUrl()}
+      href={buildProjectPath(project)}
       sx={{
         textDecoration: 'none',
         display: 'flex',
@@ -51,7 +35,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
         <Box
           component="img"
           src={imageUrl}
-          alt={project.client?.name || project.title}
+          alt={formatProjectImageAlt(project, 0)}
           sx={{
             width: '100%',
             height: { xs: 240, md: 328 },

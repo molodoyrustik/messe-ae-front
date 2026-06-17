@@ -68,7 +68,7 @@ export const ContactFormModal = ({ open, onClose }: ContactFormModalProps) => {
               WebkitOverflowScrolling: "touch",
             }}
           >
-            <ContactFormNew />
+            {open && <ContactFormNew />}
           </Box>
         </Box>
       </Drawer>
@@ -99,7 +99,7 @@ export const ContactFormModal = ({ open, onClose }: ContactFormModalProps) => {
         >
           <CloseIcon />
         </IconButton>
-        <ContactFormNew />
+        {open && <ContactFormNew onClose={onClose} />}
       </DialogContent>
     </Dialog>
   );

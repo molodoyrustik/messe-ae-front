@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { METADATA_BASE, getRootRobots } from "@/lib/seo";
 import ThemeProvider from "@/components/ThemeProvider";
 import QueryProvider from "@/components/QueryProvider";
 import EmotionRegistry from "@/lib/emotion-registry";
@@ -31,10 +32,7 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL("https://messe.ae"),
-  alternates: {
-    canonical: "/",
-  },
+  metadataBase: METADATA_BASE,
   openGraph: {
     title: "Messe.ae - Exhibition Stand Builder & Designer in UAE",
     description:
@@ -60,17 +58,7 @@ export const metadata: Metadata = {
     images: ["/twitter-image.jpg"], // You'll need to add this image
     creator: "@messeae",
   },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
-  },
+  robots: getRootRobots(),
   verification: {
     google: "google-site-verification-code", // Add your Google verification code
     yandex: "yandex-verification-code", // Add if needed

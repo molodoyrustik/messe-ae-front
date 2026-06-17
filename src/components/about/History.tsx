@@ -24,7 +24,7 @@ export default function History() {
         {
             id: 3,
             img: '3',
-            html: 'Expo Global moved to Belgium, rebranded, and became the <b>parent company</b> of several specialized brands',
+            html: 'ExpoGlobal moved to Belgium, rebranded, and became the <b>parent company</b> of several specialized brands',
             year: 2009,
         },
         {

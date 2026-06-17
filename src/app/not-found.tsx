@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { NOINDEX_ROBOTS } from '@/lib/seo';
 import Link from 'next/link';
 import { Box, Container, Typography, Button } from '@mui/material';
 import Header from '@/components/Header';
@@ -7,6 +8,7 @@ import FooterSection from '@/components/landing/FooterSection';
 export const metadata: Metadata = {
   title: '404 - Page Not Found',
   description: 'The page you are looking for does not exist.',
+  robots: NOINDEX_ROBOTS,
 };
 
 export default function NotFound() {

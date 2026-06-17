@@ -273,7 +273,7 @@ const FooterSection = () => {
                 </IconButton>
                 <IconButton
                   component="a"
-                  href="https://www.facebook.com/ExpoGlobalGroup"
+                  href="https://www.facebook.com/profile.php?id=61571709386052"
                   target="_blank"
                   rel="noopener noreferrer"
                   size="small"
@@ -452,7 +452,7 @@ const FooterSection = () => {
             </IconButton>
             <IconButton
               component="a"
-              href="https://www.facebook.com/ExpoGlobalGroup"
+              href="https://www.facebook.com/profile.php?id=61571709386052"
               target="_blank"
               rel="noopener noreferrer"
               size="small"
@@ -537,7 +537,7 @@ const FooterSection = () => {
             </Typography>
 
             {/* Contact Form */}
-            <ContactFormNew />
+            <ContactFormNew id="contact-form" />
           </Box>
         </Box>
       </Container>

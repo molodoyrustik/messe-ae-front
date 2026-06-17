@@ -12,8 +12,7 @@ export const projectsApi = {
     params.append('populate[client][fields][2]', 'description');
     params.append('populate[client][fields][3]', 'link');
     params.append('populate[images][fields][0]', 'url');
-    params.append('populate[images][fields][1]', 'alternativeText');
-    params.append('populate[images][fields][2]', 'formats');
+    params.append('populate[images][fields][1]', 'formats');
     
     // Handle client filters
     if (filters?.clientSlug) {
@@ -116,11 +115,10 @@ export const projectsApi = {
     params.append('populate[client][fields][2]', 'description');
     params.append('populate[client][fields][3]', 'link');
     params.append('populate[images][fields][0]', 'url');
-    params.append('populate[images][fields][1]', 'alternativeText');
-    params.append('populate[images][fields][2]', 'formats');
-    params.append('populate[images][fields][3]', 'width');
-    params.append('populate[images][fields][4]', 'height');
-    params.append('populate[images][fields][5]', 'id');
+    params.append('populate[images][fields][1]', 'formats');
+    params.append('populate[images][fields][2]', 'width');
+    params.append('populate[images][fields][3]', 'height');
+    params.append('populate[images][fields][4]', 'id');
     
     return fetcher(`/projects/${documentId}?${params.toString()}`);
   },

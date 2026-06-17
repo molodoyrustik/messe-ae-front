@@ -3,8 +3,14 @@ import { Article } from '@/components/ArticleCard';
 import { articlesApi } from '@/lib/api/articles';
 import { notFound } from 'next/navigation';
 import { formatArticleDate } from '@/utils/date';
-import { createMetadata } from '@/lib/seo';
+import { NOINDEX_ROBOTS, createMetadata } from '@/lib/seo';
 import { STRAPI_BASE_URL } from '@/lib/api/config';
+import JsonLd from '@/components/JsonLd';
+import {
+  getArticleSchema,
+  getBreadcrumbSchema,
+  resolveMediaUrl,
+} from '@/lib/structured-data';
 
 // ISR - revalidate every 60 seconds
 export const revalidate = 60;
@@ -73,11 +79,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     });
   } catch (error) {
     console.error('Error fetching article metadata:', error);
-    return createMetadata({
+    return {
       title: 'Article Not Found | Messe.ae Blog',
       description: 'The requested article could not be found on the Messe.ae blog.',
-      path: `/articles/${slug}`,
-    });
+      robots: NOINDEX_ROBOTS,
+    };
   }
 }
 
@@ -122,6 +128,14 @@ export default async function ArticlePage({ params }: PageProps) {
         image: a.image?.url || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&h=600&fit=crop',
       }));
     
+    const plainTitle = stripMarkdown(article.title);
+    const plainDescription =
+      article.subtitle?.trim() ||
+      stripMarkdown(article.text).substring(0, 160);
+    const heroImage =
+      resolveMediaUrl(article.image?.url) ||
+      'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1920&h=800&fit=crop';
+
     const articleData = {
       slug: article.slug,
       title: article.title,
@@ -130,12 +144,36 @@ export default async function ArticlePage({ params }: PageProps) {
       authorRole: 'Exhibition Experts',
       publishDate: formatArticleDate(article.createDate),
       readTime: '5 min',
-      category: 'Design',
-      heroImage: article.image?.url || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1920&h=800&fit=crop',
+      category: article.category?.title || 'Articles',
+      heroImage,
       content: article.text,
     };
+
+    const structuredData = [
+      getArticleSchema({
+        title: article.title,
+        description: plainDescription,
+        image: heroImage,
+        publishedDate: article.publishedAt || article.createDate,
+        modifiedDate: article.updatedAt,
+        slug: article.slug,
+      }),
+      getBreadcrumbSchema([
+        { name: 'Home', path: '/' },
+        { name: 'Articles', path: '/articles' },
+        { name: plainTitle, path: `/articles/${article.slug}` },
+      ]),
+    ];
     
-    return <ArticlePageClient articleData={articleData} relatedArticles={relatedArticles} />;
+    return (
+      <>
+        <JsonLd data={structuredData} />
+        <ArticlePageClient
+          articleData={articleData}
+          relatedArticles={relatedArticles}
+        />
+      </>
+    );
   } catch (error) {
     console.error('Error loading article:', error);
     notFound();

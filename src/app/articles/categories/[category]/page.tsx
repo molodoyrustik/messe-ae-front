@@ -13,7 +13,9 @@ import { articlesApi } from '@/lib/api/articles';
 import { notFound } from 'next/navigation';
 import { formatArticleDate } from '@/utils/date';
 import Link from 'next/link';
-import { createMetadata } from '@/lib/seo';
+import { NOINDEX_ROBOTS, createMetadata } from '@/lib/seo';
+import JsonLd from '@/components/JsonLd';
+import { getBreadcrumbSchema } from '@/lib/structured-data';
 
 // ISR - revalidate every 300 seconds (5 minutes)
 export const revalidate = 300;
@@ -65,11 +67,11 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
     });
   } catch (error) {
     console.error('Error fetching category metadata:', error);
-    return createMetadata({
+    return {
       title: 'Category Not Found | Messe.ae Blog',
       description: 'The requested article category could not be found on the Messe.ae blog.',
-      path: `/articles/categories/${category}`,
-    });
+      robots: NOINDEX_ROBOTS,
+    };
   }
 }
 
@@ -113,7 +115,18 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
   const hasMore = articlesData ? currentPage < articlesData.meta.pagination.pageCount : false;
   const hasPrevious = currentPage > 1;
 
+  const categoryBreadcrumbSchema = getBreadcrumbSchema([
+    { name: 'Home', path: '/' },
+    { name: 'Articles', path: '/articles' },
+    {
+      name: categoryData.title,
+      path: `/articles/categories/${category}`,
+    },
+  ]);
+
   return (
+    <>
+      <JsonLd data={categoryBreadcrumbSchema} />
     <Box sx={{ minHeight: '100vh', backgroundColor: '#FFFFFF' }}>
       <Header />
       
@@ -300,5 +313,6 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
 
       <FooterSection />
     </Box>
+    </>
   );
 }

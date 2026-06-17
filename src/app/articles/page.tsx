@@ -14,6 +14,8 @@ import { articlesApi } from '@/lib/api/articles';
 import { formatArticleDate } from '@/utils/date';
 import Link from 'next/link';
 import { createMetadata } from '@/lib/seo';
+import JsonLd from '@/components/JsonLd';
+import { getBreadcrumbSchema } from '@/lib/structured-data';
 
 // ISR - revalidate every 300 seconds (5 minutes) 
 export const revalidate = 300;
@@ -25,6 +27,11 @@ export const metadata = createMetadata({
   path: '/articles',
   keywords: ['messe.ae blog', 'exhibition stand insights', 'event marketing tips'],
 });
+
+const articlesBreadcrumbSchema = getBreadcrumbSchema([
+  { name: 'Home', path: '/' },
+  { name: 'Articles', path: '/articles' },
+]);
 
 export default async function ArticlesPage() {
   let data;
@@ -43,6 +50,8 @@ export default async function ArticlesPage() {
 
   if (error || !data?.data.length) {
     return (
+      <>
+        <JsonLd data={articlesBreadcrumbSchema} />
       <Box sx={{ minHeight: '100vh', backgroundColor: '#FFFFFF' }}>
         <Header />
         <Container maxWidth="xl" sx={{ px: { xs: '1rem', md: '2.5rem' }, pt: { xs: '1.5rem', md: '3.75rem' }, pb: { xs: '3rem', md: '6rem' } }}>
@@ -52,6 +61,7 @@ export default async function ArticlesPage() {
         </Container>
         <FooterSection />
       </Box>
+      </>
     );
   }
 
@@ -60,6 +70,8 @@ export default async function ArticlesPage() {
   const hasMore = data.meta.pagination.pageCount > 1;
 
   return (
+    <>
+      <JsonLd data={articlesBreadcrumbSchema} />
     <Box sx={{ minHeight: '100vh', backgroundColor: '#FFFFFF' }}>
       <Header />
       
@@ -243,5 +255,6 @@ export default async function ArticlesPage() {
 
       <FooterSection />
     </Box>
+    </>
   );
 }

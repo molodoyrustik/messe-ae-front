@@ -111,8 +111,12 @@ export const normalizeCanonicalPath = (path: string): string => {
   return normalized;
 };
 
+const withQuery = (path: string, query?: string): string =>
+  query ? `${path}?${query}` : path;
+
 export const canonicalAlternates = (
-  path: string
+  path: string,
+  query?: string
 ): Pick<Metadata, "alternates"> | undefined => {
   if (!isIndexableEnvironment()) {
     return undefined;
@@ -120,7 +124,7 @@ export const canonicalAlternates = (
 
   return {
     alternates: {
-      canonical: normalizeCanonicalPath(path),
+      canonical: withQuery(normalizeCanonicalPath(path), query),
     },
   };
 };
@@ -150,6 +154,8 @@ interface CreateMetadataOptions {
   type?: "website" | "article";
   /** When false, omits canonical and sets noindex (404, ui-kit, etc.). Default true. */
   indexable?: boolean;
+  /** Query kept in canonical/og:url, e.g. "page=2" for paginated listings. */
+  canonicalQuery?: string;
 }
 
 export const createMetadata = ({
@@ -160,9 +166,10 @@ export const createMetadata = ({
   image,
   type = "website",
   indexable = true,
+  canonicalQuery,
 }: CreateMetadataOptions): Metadata => {
   const canonicalPath = normalizeCanonicalPath(path);
-  const url = toAbsoluteUrl(canonicalPath);
+  const url = withQuery(toAbsoluteUrl(canonicalPath), canonicalQuery);
   const resolvedImage = image ? toAbsoluteUrl(image) : DEFAULT_OG_IMAGE;
   const uniqueKeywords = Array.from(
     new Set(
@@ -178,7 +185,7 @@ export const createMetadata = ({
     title,
     description,
     keywords: uniqueKeywords,
-    ...(shouldIndex ? canonicalAlternates(canonicalPath) : {}),
+    ...(shouldIndex ? canonicalAlternates(canonicalPath, canonicalQuery) : {}),
     robots: shouldIndex ? INDEXABLE_ROBOTS : NOINDEX_ROBOTS,
     openGraph: {
       title,

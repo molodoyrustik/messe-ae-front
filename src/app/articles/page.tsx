@@ -21,7 +21,7 @@ import { getBreadcrumbSchema } from '@/lib/structured-data';
 export const revalidate = 300;
 
 export const metadata = createMetadata({
-  title: 'Messe.ae Blog | Exhibition Stand Insights & Industry Updates',
+  title: 'Blog | Exhibition Stand Insights & Industry Updates',
   description:
     'Read Messe articles on exhibition stand design, industry trends, and event solutions in Dubai & UAE. Insights for businesses and event organizers.',
   path: '/articles',

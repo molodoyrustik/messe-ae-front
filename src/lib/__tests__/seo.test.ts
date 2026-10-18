@@ -78,6 +78,18 @@ describe("createMetadata", () => {
     expect(metadata.alternates).toBeUndefined();
     expect(metadata.robots).toEqual({ index: false, follow: false });
   });
+  it("keeps canonicalQuery for paginated listings", () => {
+    vi.stubEnv("VERCEL_ENV", "production");
+    const metadata = createMetadata({
+      title: "Projects",
+      description: "Projects page 2",
+      path: "/projects?clients=x",
+      canonicalQuery: "page=2",
+    });
+
+    expect(metadata.alternates).toEqual({ canonical: "/projects?page=2" });
+    expect(metadata.openGraph?.url).toBe("https://messe.ae/projects?page=2");
+  });
 });
 
 describe("isIndexableEnvironment", () => {

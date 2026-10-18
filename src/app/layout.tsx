@@ -59,10 +59,6 @@ export const metadata: Metadata = {
     creator: "@messeae",
   },
   robots: getRootRobots(),
-  verification: {
-    google: "google-site-verification-code", // Add your Google verification code
-    yandex: "yandex-verification-code", // Add if needed
-  },
   category: "business",
 };
 

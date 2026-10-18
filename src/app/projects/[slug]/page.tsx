@@ -18,6 +18,7 @@ import { NOINDEX_ROBOTS, createMetadata } from '@/lib/seo';
 import JsonLd from '@/components/JsonLd';
 import { getBreadcrumbSchema, getProjectSchema } from '@/lib/structured-data';
 import { buildProjectPath } from '@/lib/project-url';
+import { buildProjectDescription, buildProjectTitle } from '@/lib/project-seo';
 
 // ISR - revalidate every 300 seconds (5 minutes)
 export const revalidate = 300;
@@ -64,10 +65,6 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     const response = await projectsApi.getProjectById(documentId);
     const project = response.data;
     
-    const description =
-      project.description ||
-      `Custom exhibition stand for ${project.client?.name || 'our client'} at ${project.eventName || 'a leading trade show'}.`;
-
     const coverImage = project.images?.[0]?.url
       ? resolveStrapiMediaUrl(project.images[0].url) || undefined
       : undefined;
@@ -80,8 +77,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     ].filter(Boolean);
 
     return createMetadata({
-      title: `${project.client?.name || 'Project'} Exhibition Stand | Messe.ae`,
-      description,
+      title: buildProjectTitle(project),
+      description: buildProjectDescription(project),
       path: `/projects/${slug}`,
       keywords,
       image: coverImage,
@@ -90,7 +87,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   } catch (error) {
     console.error('Error fetching project metadata:', error);
     return {
-      title: 'Project Not Found | Messe.ae',
+      title: 'Project Not Found',
       description: 'The requested project case study could not be found.',
       robots: NOINDEX_ROBOTS,
     };

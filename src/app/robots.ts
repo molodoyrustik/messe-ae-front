@@ -1,7 +1,10 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL, isIndexableEnvironment } from "@/lib/seo";
 
-/** Single source for /robots.txt — do not add public/robots.txt */
+/**
+ * Single source for /robots.txt — do not add public/robots.txt.
+ * Never disallow /_next/: Googlebot needs JS/CSS to render and /_next/image for images.
+ */
 export default function robots(): MetadataRoute.Robots {
   if (!isIndexableEnvironment()) {
     return {
@@ -16,7 +19,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/api/", "/_next/", "/ui-kit"],
+      disallow: ["/api/", "/ui-kit"],
     },
     sitemap: `${SITE_URL}/sitemap.xml`,
   };

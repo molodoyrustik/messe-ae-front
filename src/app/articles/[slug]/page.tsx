@@ -80,7 +80,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   } catch (error) {
     console.error('Error fetching article metadata:', error);
     return {
-      title: 'Article Not Found | Messe.ae Blog',
+      title: 'Article Not Found',
       description: 'The requested article could not be found on the Messe.ae blog.',
       robots: NOINDEX_ROBOTS,
     };

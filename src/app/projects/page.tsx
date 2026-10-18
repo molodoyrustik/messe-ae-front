@@ -11,18 +11,31 @@ import JsonLd from '@/components/JsonLd';
 import { getBreadcrumbSchema } from '@/lib/structured-data';
 import {
   buildProjectsFiltersFromUrlState,
+  hasActiveProjectFilters,
   parseProjectsSearchParams,
 } from '@/lib/projects-filters';
 
 export const revalidate = 300;
 
-export const metadata = createMetadata({
-  title: 'Exhibition Stand Portfolio | Messe.ae Projects',
-  description:
-    'Explore Messe projects — exhibition stand builder & contractor in Dubai & UAE. See our custom exhibition stand designs for trade shows and events worldwide.',
-  path: '/projects',
-  keywords: ['exhibition stand portfolio', 'trade show booth showcase', 'messe.ae projects'],
-});
+const PROJECTS_DESCRIPTION =
+  'Explore Messe projects — exhibition stand builder & contractor in Dubai & UAE. See our custom exhibition stand designs for trade shows and events worldwide.';
+
+export async function generateMetadata({ searchParams }: ProjectsPageProps) {
+  const urlState = parseProjectsSearchParams(await searchParams);
+  // Filter combinations collapse to /projects; plain pagination keeps its own canonical.
+  const page = !hasActiveProjectFilters(urlState) && urlState.page > 1 ? urlState.page : 1;
+
+  return createMetadata({
+    title:
+      page > 1
+        ? `Exhibition Stand Portfolio & Projects — Page ${page}`
+        : 'Exhibition Stand Portfolio & Projects',
+    description: page > 1 ? `${PROJECTS_DESCRIPTION} Page ${page}.` : PROJECTS_DESCRIPTION,
+    path: '/projects',
+    canonicalQuery: page > 1 ? `page=${page}` : undefined,
+    keywords: ['exhibition stand portfolio', 'trade show booth showcase', 'messe.ae projects'],
+  });
+}
 
 const projectsBreadcrumbSchema = getBreadcrumbSchema([
   { name: 'Home', path: '/' },

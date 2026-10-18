@@ -54,7 +54,7 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
     const categoryData = categoryResponse.data;
 
     return createMetadata({
-      title: `${categoryData.title} Articles | Messe.ae Blog`,
+      title: `${categoryData.title} Articles | Blog`,
       description:
         categoryData.description ||
         `Read Messe articles on ${categoryData.title.toLowerCase()} — exhibition stand design, industry trends, and event solutions in Dubai & UAE. Insights for businesses and event organizers.`,
@@ -68,7 +68,7 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
   } catch (error) {
     console.error('Error fetching category metadata:', error);
     return {
-      title: 'Category Not Found | Messe.ae Blog',
+      title: 'Category Not Found',
       description: 'The requested article category could not be found on the Messe.ae blog.',
       robots: NOINDEX_ROBOTS,
     };

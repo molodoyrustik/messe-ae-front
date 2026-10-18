@@ -14,19 +14,10 @@ import Link from 'next/link';
 import { ContactFormModal } from '@/components/ContactFormModal';
 import { useMobileMenu } from '@/contexts/MobileMenuContext';
 import { Project } from '@/types/api';
-import { STRAPI_BASE_URL } from '@/lib/api/config';
+import { getStrapiImageSource } from '@/utils/strapiMedia';
 import { trackModalOpen } from '@/lib/analytics';
 import { formatProjectImageAlt } from '@/utils/projectImageAlt';
 
-// Helper function to get full image URL
-const getImageUrl = (url: string) => {
-  if (!url) return '';
-  if (url.startsWith('http://') || url.startsWith('https://')) {
-    return url;
-  }
-  // For Strapi images that come with relative paths
-  return `${STRAPI_BASE_URL}${url}`;
-};
 
 // Project categories configuration
 const projectCategoriesConfig = [
@@ -129,7 +120,7 @@ const ProjectCard = ({ category, currentIndex, onNavigate }: {
             >
               {project.images && project.images.length > 0 ? (
                 <Image
-                  src={getImageUrl(project.images[0].url)}
+                  src={getStrapiImageSource(project.images[0])?.src ?? ''}
                   alt={formatProjectImageAlt(project, 0)}
                   fill
                   priority={index === 0}

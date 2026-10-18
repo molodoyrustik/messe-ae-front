@@ -3,6 +3,7 @@
 import { Box, Container, Typography, Stack, Button } from "@mui/material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import Image from "next/image";
+import Link from "next/link";
 
 const ExpoglobalSection = () => {
   return (
@@ -150,10 +151,17 @@ const ExpoglobalSection = () => {
               </Box>{" "}
               (mobile homes).{" "}
               <Box
-                component="span"
+                component={Link}
+                href="/about"
                 sx={{
                   color: "#656CAF",
                   fontWeight: 700,
+                  textDecoration: "underline",
+                  textDecorationColor: "#656CAF",
+                  "&:hover": {
+                    color: "#4C53A2",
+                    textDecorationColor: "#4C53A2",
+                  },
                 }}
               >
                 Messe.ae

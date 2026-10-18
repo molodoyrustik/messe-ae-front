@@ -25,7 +25,13 @@ function validationPhone(phone: string) {
   return /^\+\d+$/.test(phone);
 }
 
-export const ContactFormNew = ({ onClose }: { onClose?: () => void }) => {
+export const ContactFormNew = ({
+  onClose,
+  id,
+}: {
+  onClose?: () => void;
+  id?: string;
+}) => {
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -244,6 +250,7 @@ export const ContactFormNew = ({ onClose }: { onClose?: () => void }) => {
     >
       <Box
         component="form"
+        id={id}
         onSubmit={handleSubmit}
         suppressHydrationWarning={true}
         sx={{

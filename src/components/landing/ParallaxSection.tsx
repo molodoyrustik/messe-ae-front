@@ -101,57 +101,36 @@ export default function ParallaxSection({ className = '' }: ParallaxSectionProps
           zIndex: 10,
         }}
       >
-        {/* ДЕСКТОП контент - статичный */}
-        <Box
-          sx={{
-            display: { xs: 'none', md: 'block' },
-            position: 'absolute',
-            bottom: '3.75rem',
-          }}
-        >
-          <Typography
-            variant="h3"
-            sx={{
-              fontFamily: 'Roboto',
-              fontSize: '3.375rem',
-              fontStyle: 'normal',
-              fontWeight: 700,
-              lineHeight: '3.75rem',
-              color: 'rgba(255, 255, 255, 0.80)',
-              textShadow: '0 2px 4px rgba(0, 0, 0, 0.5)',
-              transition: 'transform 0.3s ease',
-              '&:hover': {
-                transform: 'scale(1.02)',
-              },
-            }}
-          >
-            Why messe.ae only?
-          </Typography>
-        </Box>
-
-        {/* МОБАЙЛ контент - с Motion анимациями */}
         <Box
           component={motion.div}
-          style={isMobile ? {
-            position: 'absolute',
-            bottom: '3.75rem',
-            opacity: textOpacity,
-            y: mobileContentY, // Контент тоже участвует в параллаксе на мобильных
-          } : {}}
-          sx={{
-            display: { xs: 'block', md: 'none' },
-          }}
+          style={
+            isMobile
+              ? {
+                  position: "absolute",
+                  bottom: "3.75rem",
+                  opacity: textOpacity,
+                  y: mobileContentY,
+                }
+              : {
+                  position: "absolute",
+                  bottom: "3.75rem",
+                }
+          }
         >
           <Typography
             variant="h3"
             sx={{
-              fontFamily: 'Roboto',
-              fontSize: '2rem',
-              fontStyle: 'normal',
+              fontFamily: "Roboto",
+              fontSize: { xs: "2rem", md: "3.375rem" },
+              fontStyle: "normal",
               fontWeight: 700,
-              lineHeight: '2.25rem',
-              color: 'rgba(255, 255, 255, 0.80)',
-              textShadow: '0 2px 4px rgba(0, 0, 0, 0.5)',
+              lineHeight: { xs: "2.25rem", md: "3.75rem" },
+              color: "rgba(255, 255, 255, 0.80)",
+              textShadow: "0 2px 4px rgba(0, 0, 0, 0.5)",
+              transition: "transform 0.3s ease",
+              "&:hover": {
+                transform: { md: "scale(1.02)" },
+              },
             }}
           >
             Why messe.ae only?

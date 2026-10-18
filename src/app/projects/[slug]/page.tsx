@@ -13,7 +13,7 @@ import { notFound, permanentRedirect } from 'next/navigation';
 import { ProjectResponse } from '@/types/api';
 import { formatProjectSizeDisplay, formatTotalSizeForUrl, hasDisplaySize } from '@/utils/projectSizes';
 import { formatProjectImageAlt } from '@/utils/projectImageAlt';
-import { resolveStrapiMediaUrl } from '@/utils/strapiMedia';
+import { getStrapiImageSource } from '@/utils/strapiMedia';
 import { NOINDEX_ROBOTS, createMetadata } from '@/lib/seo';
 import JsonLd from '@/components/JsonLd';
 import { getBreadcrumbSchema, getProjectSchema } from '@/lib/structured-data';
@@ -65,9 +65,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     const response = await projectsApi.getProjectById(documentId);
     const project = response.data;
     
-    const coverImage = project.images?.[0]?.url
-      ? resolveStrapiMediaUrl(project.images[0].url) || undefined
-      : undefined;
+    const coverImage = getStrapiImageSource(project.images?.[0])?.src;
 
     const keywords = [
       project.client?.name || '',
@@ -468,26 +466,30 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
                   width: '100%',
                 }}
               >
-                {project.images.map((image, index) => (
-                  <Box key={image.id || index} sx={{ position: 'relative' }}>
-                    <Image
-                      src={resolveStrapiMediaUrl(image.url)}
-                      alt={formatProjectImageAlt(project, index)}
-                      width={400}
-                      height={316}
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      quality={85}
-                      unoptimized
-                      style={{
-                        width: '100%',
-                        height: 'auto',
-                        borderRadius: '0.5rem',
-                        objectFit: 'cover',
-                      }}
-                      priority={index === 0}
-                    />
-                  </Box>
-                ))}
+                {project.images.map((image, index) => {
+                  const source = getStrapiImageSource(image);
+                  if (!source) return null;
+
+                  return (
+                    <Box key={image.id || index} sx={{ position: 'relative' }}>
+                      <Image
+                        src={source.src}
+                        alt={formatProjectImageAlt(project, index)}
+                        width={source.width ?? 1000}
+                        height={source.height ?? 667}
+                        sizes="(max-width: 599px) 100vw, (max-width: 899px) 50vw, 33vw"
+                        quality={80}
+                        style={{
+                          width: '100%',
+                          height: 'auto',
+                          borderRadius: '0.5rem',
+                          objectFit: 'cover',
+                        }}
+                        priority={index === 0}
+                      />
+                    </Box>
+                  );
+                })}
               </Box>
             </Box>
           )}

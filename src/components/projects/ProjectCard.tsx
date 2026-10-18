@@ -1,8 +1,9 @@
 import { Box, Typography } from '@mui/material';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Project } from '@/types/api';
 import { buildProjectPath } from '@/lib/project-url';
-import { resolveStrapiMediaUrl } from '@/utils/strapiMedia';
+import { getStrapiImageSource } from '@/utils/strapiMedia';
 import { formatProjectSizeDisplay, hasDisplaySize } from '@/utils/projectSizes';
 import { formatProjectImageAlt } from '@/utils/projectImageAlt';
 
@@ -11,9 +12,7 @@ interface ProjectCardProps {
 }
 
 export default function ProjectCard({ project }: ProjectCardProps) {
-  const baseImageUrl = project.images?.[0]?.formats?.medium?.url || 
-                       project.images?.[0]?.url;
-  const imageUrl = resolveStrapiMediaUrl(baseImageUrl);
+  const image = getStrapiImageSource(project.images?.[0]);
 
   return (
     <Box
@@ -31,19 +30,27 @@ export default function ProjectCard({ project }: ProjectCardProps) {
         },
       }}
     >
-      {imageUrl ? (
+      {image ? (
         <Box
-          component="img"
-          src={imageUrl}
-          alt={formatProjectImageAlt(project, 0)}
           sx={{
+            position: 'relative',
             width: '100%',
             height: { xs: 240, md: 328 },
-            objectFit: 'cover',
-            borderRadius: '4px',
-            transition: 'transform 0.3s ease',
+            '& img': {
+              objectFit: 'cover',
+              borderRadius: '4px',
+              transition: 'transform 0.3s ease',
+            },
           }}
-        />
+        >
+          <Image
+            src={image.src}
+            alt={formatProjectImageAlt(project, 0)}
+            fill
+            sizes="(max-width: 599px) 100vw, (max-width: 899px) 50vw, 33vw"
+            quality={80}
+          />
+        </Box>
       ) : (
         <Box
           sx={{

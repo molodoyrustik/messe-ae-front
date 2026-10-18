@@ -9,7 +9,7 @@ import Image from 'next/image';
 import Header from '@/components/Header';
 import FooterSection from '@/components/landing/FooterSection';
 import { projectsApi } from '@/lib/api/projects';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import { ProjectResponse } from '@/types/api';
 import { formatProjectSizeDisplay, formatTotalSizeForUrl, hasDisplaySize } from '@/utils/projectSizes';
 import { formatProjectImageAlt } from '@/utils/projectImageAlt';
@@ -79,7 +79,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     return createMetadata({
       title: buildProjectTitle(project),
       description: buildProjectDescription(project),
-      path: `/projects/${slug}`,
+      path: buildProjectPath(project),
       keywords,
       image: coverImage,
       type: 'article',
@@ -143,6 +143,11 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
   const project = data.data;
   const projectPath = buildProjectPath(project);
+
+  // Slug prefix (client + size) can go stale after CMS edits; only documentId identifies the project.
+  if (`/projects/${slug}` !== projectPath) {
+    permanentRedirect(projectPath);
+  }
   const projectName =
     project.client?.name || 'Exhibition stand project';
 

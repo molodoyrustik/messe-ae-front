@@ -140,43 +140,43 @@ const HeroSection = () => {
           zIndex: 2,
         }}
       >
-        {/* Desktop Layout - Bottom Container */}
+        {/* Hero copy — single instance in DOM, responsive layout */}
         <Box
           sx={{
-            display: { xs: "none", md: "flex" },
             position: "absolute",
-            bottom: "2.5rem",
-            left: "2.5rem",
-            right: "2.5rem",
+            bottom: { xs: "0.5rem", md: "2.5rem" },
+            left: { xs: "1rem", md: "2.5rem" },
+            right: { xs: "1rem", md: "2.5rem" },
+            display: "flex",
             flexDirection: "column",
-            gap: "1.5rem",
+            gap: { xs: 0, md: "1.5rem" },
+            alignItems: { xs: "stretch", md: "flex-start" },
           }}
         >
-          {/* Main Title */}
           <Typography
             variant="h1"
             sx={{
-              maxWidth: "1084px",
-              fontSize: "54px",
+              maxWidth: { md: "1084px" },
+              fontSize: { xs: "24px", md: "54px" },
               fontWeight: 700,
-              lineHeight: "60px",
-              letterSpacing: "normal",
+              lineHeight: { xs: "28px", md: "60px" },
+              letterSpacing: { xs: "0.01em", md: "normal" },
               color: "#FFFFFF",
+              mb: { xs: "0.75rem", md: 0 },
             }}
           >
             Exhibition Stand Builder & Designer in UAE and around the world
           </Typography>
 
-          {/* Subtitle with mixed styling */}
           <Typography
             component="div"
             sx={{
-              fontSize: "34px",
+              fontSize: { xs: "12px", md: "34px" },
               fontWeight: 400,
-              lineHeight: "42px",
-              letterSpacing: "-0.025em",
+              lineHeight: { xs: "16px", md: "42px" },
+              letterSpacing: { xs: "0.04em", md: "-0.025em" },
               color: "#FFFFFF",
-              maxWidth: "900px",
+              maxWidth: { md: "900px" },
             }}
           >
             <Box component="span">Your great </Box>
@@ -184,9 +184,16 @@ const HeroSection = () => {
               exhibition stand design
             </Box>
             <Box component="span"> starts here.</Box>
-            <Box component="span" sx={{ display: "block" }}>
+            <Box
+              component="span"
+              sx={{ display: { xs: "none", md: "block" } }}
+            >
               {" "}
             </Box>
+            <Box
+              component="br"
+              sx={{ display: { xs: "block", md: "none" } }}
+            />
             <Box component="span" sx={{ fontWeight: 700, color: "#656CAF" }}>
               Fill in
             </Box>
@@ -197,20 +204,51 @@ const HeroSection = () => {
             <Box component="span">, and we will handle the rest.</Box>
           </Typography>
 
-          {/* "20 years" text */}
+          <Button
+            ref={heroButtonRef}
+            variant="contained"
+            fullWidth
+            onClick={() => {
+              trackModalOpen("hero_mobile_primary");
+              trackMetaModalOpen("hero_mobile_primary");
+              setContactModalOpen(true);
+            }}
+            sx={{
+              display: { xs: "flex", md: "none" },
+              width: "100%",
+              height: "48px",
+              backgroundColor: "#656CAF",
+              borderRadius: "8px",
+              boxShadow:
+                "0px 3px 1px -2px rgba(0,0,0,0.20), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12)",
+              textTransform: "none",
+              fontSize: "16px",
+              fontWeight: 400,
+              lineHeight: "24px",
+              letterSpacing: "0.02em",
+              mt: "2rem",
+              mb: "1.5rem",
+              "&:hover": {
+                backgroundColor: "#4C53A2",
+              },
+            }}
+          >
+            Connect with us
+          </Button>
+
           <Box
             sx={{
               display: "flex",
               alignItems: "baseline",
-              gap: "1rem",
-              mt: "1rem",
+              gap: { xs: "8px", md: "1rem" },
+              mt: { xs: 0, md: "1rem" },
             }}
           >
             <Typography
               sx={{
-                fontSize: "120px",
+                fontSize: { xs: "60px", md: "120px" },
                 fontWeight: 700,
-                lineHeight: "140px",
+                lineHeight: { xs: "72px", md: "140px" },
                 color: "#FFFFFF",
               }}
             >
@@ -218,10 +256,10 @@ const HeroSection = () => {
             </Typography>
             <Typography
               sx={{
-                fontSize: "34px",
+                fontSize: { xs: "12px", md: "34px" },
                 fontWeight: 400,
-                lineHeight: "42px",
-                letterSpacing: "-0.025em",
+                lineHeight: { xs: "16px", md: "42px" },
+                letterSpacing: { xs: "0.04em", md: "-0.025em" },
                 color: "#FFFFFF",
                 alignSelf: "center",
               }}
@@ -269,120 +307,6 @@ const HeroSection = () => {
           Discuss Your Project
         </Button>
 
-        {/* Mobile Layout - Combined bottom block */}
-        <Box
-          sx={{
-            position: "absolute",
-            bottom: "0.5rem",
-            left: "1rem",
-            right: "1rem",
-            display: { xs: "flex", md: "none" },
-            flexDirection: "column",
-            alignItems: "stretch",
-          }}
-        >
-          {/* Main Title - Mobile */}
-          <Typography
-            variant="h1"
-            sx={{
-              fontSize: "24px",
-              fontWeight: 700,
-              lineHeight: "28px",
-              letterSpacing: "0.01em",
-              color: "#FFFFFF",
-              mb: "0.75rem", // 12px gap to subtitle
-            }}
-          >
-            Exhibition Stand Builder & Designer in UAE and around the world
-          </Typography>
-
-          {/* Subtitle with mixed styling - Mobile */}
-          <Typography
-            component="div"
-            sx={{
-              fontSize: "12px",
-              fontWeight: 400,
-              lineHeight: "16px",
-              letterSpacing: "0.04em",
-              color: "#FFFFFF",
-            }}
-          >
-            <Box component="span">Your great </Box>
-            <Box component="span" sx={{ fontWeight: 700 }}>
-              exhibition stand design
-            </Box>
-            <Box component="span"> starts here.</Box>
-            <Box component="span"> </Box>
-            <br />
-            <Box component="span" sx={{ fontWeight: 700, color: "#656CAF" }}>
-              Fill in
-            </Box>
-            <Box component="span"> the </Box>
-            <Box component="span" sx={{ fontWeight: 700, color: "#656CAF" }}>
-              form
-            </Box>
-            <Box component="span">, and we will handle the rest.</Box>
-          </Typography>
-
-          {/* Static Connect Button - Mobile */}
-          <Button
-            ref={heroButtonRef}
-            variant="contained"
-            fullWidth
-            onClick={() => {
-              trackModalOpen("hero_mobile_primary");
-              trackMetaModalOpen("hero_mobile_primary");
-              setContactModalOpen(true);
-            }}
-            sx={{
-              width: "100%",
-              height: "48px",
-              backgroundColor: "#656CAF",
-              borderRadius: "8px",
-              boxShadow:
-                "0px 3px 1px -2px rgba(0,0,0,0.20), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12)",
-              textTransform: "none",
-              fontSize: "16px",
-              fontWeight: 400,
-              lineHeight: "24px",
-              letterSpacing: "0.02em",
-              mt: "2rem",
-              mb: "1.5rem",
-
-              "&:hover": {
-                backgroundColor: "#4C53A2",
-              },
-            }}
-          >
-            Connect with us
-          </Button>
-
-          {/* "20 years" text for mobile */}
-          <Box sx={{ display: "flex", alignItems: "baseline", gap: "8px" }}>
-            <Typography
-              sx={{
-                fontSize: "60px",
-                fontWeight: 700,
-                lineHeight: "72px",
-                color: "#FFFFFF",
-              }}
-            >
-              20
-            </Typography>
-            <Typography
-              sx={{
-                fontSize: "12px",
-                fontWeight: 400,
-                lineHeight: "16px",
-                letterSpacing: "0.04em",
-                color: "#FFFFFF",
-                alignSelf: "center",
-              }}
-            >
-              years of award winning expertise
-            </Typography>
-          </Box>
-        </Box>
       </Container>
 
       {/* Floating CTA Button - Mobile */}

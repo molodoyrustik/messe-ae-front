@@ -178,49 +178,43 @@ const ProjectsSection = () => {
           Our Projects
         </Typography>
 
-        {/* Projects Grid - Desktop and Tablet */}
         <Box
           sx={{
-            display: { xs: "none", sm: "grid" },
+            display: { xs: "flex", sm: "grid" },
             gridTemplateColumns: { sm: "repeat(2, 1fr)", md: "repeat(4, 1fr)" },
-            gap: { sm: 2, md: 4 },
-            mb: { sm: 6, md: 8 },
+            gap: { xs: "8px", sm: 2, md: 4 },
+            mb: { xs: 3, sm: 6, md: 8 },
+            overflowX: { xs: "auto", sm: "visible" },
+            pb: { xs: 2, sm: 0 },
+            scrollSnapType: { xs: "x mandatory", sm: "none" },
+            "&::-webkit-scrollbar": {
+              display: { xs: "none", sm: "block" },
+            },
           }}
         >
-          {projectCategoriesConfig.map((category) => (
-            <ProjectCard key={category.id} category={category} />
+          {projectCategoriesConfig.map((category, index) => (
+            <Box
+              key={category.id}
+              sx={{
+                minWidth: { xs: "280px", sm: "auto" },
+                scrollSnapAlign: { xs: "start", sm: "none" },
+                pl: {
+                  xs: index === 0 ? "0" : 0,
+                  sm: 0,
+                },
+                pr: {
+                  xs:
+                    index === projectCategoriesConfig.length - 1 ? "1rem" : 0,
+                  sm: 0,
+                },
+                width: { xs: "auto", sm: "100%" },
+              }}
+            >
+              <ProjectCard category={category} />
+            </Box>
           ))}
         </Box>
       </Container>
-
-      {/* Projects Carousel - Mobile (Full Width) */}
-      <Box
-        sx={{
-          display: { xs: "flex", sm: "none" },
-          gap: "8px",
-          overflowX: "auto",
-          pb: 2,
-          mb: 3,
-          scrollSnapType: "x mandatory",
-          "&::-webkit-scrollbar": {
-            display: "none",
-          },
-        }}
-      >
-        {projectCategoriesConfig.map((category, index) => (
-          <Box
-            key={category.id}
-            sx={{
-              minWidth: "280px",
-              scrollSnapAlign: "start",
-              pl: index === 0 ? "1rem" : 0, // Padding for first card
-              pr: index === projectCategoriesConfig.length - 1 ? "1rem" : 0, // End padding for last card
-            }}
-          >
-            <ProjectCard category={category} />
-          </Box>
-        ))}
-      </Box>
 
       <Container maxWidth="xl" sx={{ px: { xs: "1rem", md: "2.5rem" } }}>
         {/* Call to Action Section */}

@@ -49,7 +49,7 @@ export async function generateMetadata({ params }: { params: Promise<{ page: str
   const pageNumber = parseInt(page, 10);
 
   return createMetadata({
-    title: `Messe.ae Blog | Page ${pageNumber} Insights`,
+    title: `Blog | Exhibition Stand Insights — Page ${pageNumber}`,
     description: `Read Messe articles on exhibition stand design, industry trends, and event solutions in Dubai & UAE. Page ${pageNumber} insights for businesses and event organizers.`,
     path: `/articles/page/${pageNumber}`,
     keywords: [

@@ -2,7 +2,7 @@ import PrivacyPolicyPage from '@/components/PrivacyPolicyPage';
 import { createMetadata } from '@/lib/seo';
 
 export const metadata = createMetadata({
-  title: 'Privacy Policy | Messe.ae',
+  title: 'Privacy Policy',
   description:
     'Understand how Messe.ae collects, uses, and protects personal data for exhibition stand projects in the UAE and worldwide.',
   path: '/privacy-policy',

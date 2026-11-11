@@ -213,6 +213,14 @@ When implementing features or fixes that establish new patterns for the entire c
 - Size uses `formatTotalSizeForUrl()` utility to handle null/undefined values
 - Articles use their existing `slug` field directly
 
+### SEO Metadata (Established 2026-10-18)
+
+- Every indexable page gets metadata via `createMetadata()` from `src/lib/seo.ts` — for `'use client'` pages put it in the segment's `layout.tsx` (don't drop it when editing the layout)
+- Titles must NOT end with `| Messe.ae` — the root layout template appends it
+- Project titles/descriptions come from `src/lib/project-seo.ts` (client + size + event + year) so same-client projects stay unique
+- Paginated listings keep their own canonical (`canonicalQuery: 'page=2'`); filtered views canonicalize to the base listing
+- Never add `/_next/` to robots disallow — Googlebot needs it to render pages and fetch images
+
 ### Project Image Display (Established 2025-08-28)
 
 - **Project listing page**: Shows 1 image per project (first image from array)

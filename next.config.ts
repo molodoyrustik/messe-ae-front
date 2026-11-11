@@ -6,11 +6,10 @@ const nextConfig: NextConfig = {
   
   // Image optimization
   images: {
-    formats: ['image/webp', 'image/avif'],
-    // Strapi media URLs are content-hashed, so optimized variants never go stale
-    minimumCacheTTL: 2678400,
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    // Vercel Image Optimization is a paid quota: once exceeded, /_next/image
+    // stops serving and images break. Serve files directly until we pick
+    // another optimizer (sources are already the 1000px Strapi `large` format).
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'http',
